@@ -147,6 +147,7 @@
 }
 .btn-call:hover {
   background-color: #bbf7d0;
+  text-decoration: none;
 }
 
 .btn-chat {
@@ -155,6 +156,7 @@
 }
 .btn-chat:hover {
   background-color: #bfdbfe;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {

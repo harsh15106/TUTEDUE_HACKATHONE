@@ -1,4 +1,4 @@
-.dashboard-layout {
+ .dashboard-layout {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 70px);
@@ -61,7 +61,6 @@
   justify-content: center;
   width: 100%;
   margin-top: 9vh;
-  /* Adjusted from -15vh to move it down */
 }
 
 .stats-grid a:hover {
@@ -133,3 +132,4 @@
   }
 
 }
+

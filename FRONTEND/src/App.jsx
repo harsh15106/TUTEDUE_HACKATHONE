@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import SupplierNavbar from './components/Layout/SupplierNavbar';
+import VendorNavbar from './components/Layout/VendorNavbar';
 import SDashboard from './pages/Supplier/SDashboard';
 import Stockpage from './pages/Supplier/Stockpage';
 import RequestPage from './pages/Supplier/RequestPage';
 import SupplierOrderH from './pages/Supplier/SupplierOrderH';
 import ProfilePage from './pages/Supplier/ProfilePage';
 import EditProfilePage from './pages/Supplier/EditProfilePage';
+import MapView from './pages/Supplier/MapView';
 
 function App() {
   const [requests, setRequests] = useState([
@@ -53,8 +55,10 @@ function App() {
         <Route path="/supplier/profile" element={<ProfilePage />} />
         <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
 
+
         <Route path="/" element={<Navigate to="/supplier/dashboard" replace />} />
       </Routes>
+      {/* <VendorNavbar /> */}
     </BrowserRouter>
   );
 }
