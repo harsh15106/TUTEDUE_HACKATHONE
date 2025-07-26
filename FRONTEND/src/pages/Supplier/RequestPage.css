@@ -1,5 +1,3 @@
-/* Filename: src/pages/supplier/RequestPage.css */
-
 .request-page-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -36,14 +34,13 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  border-left: 5px solid transparent; /* For status indication */
+  border-left: 5px solid transparent;
   transition: all 0.3s ease;
 }
 
-/* Status border colors */
-.request-card.status-pending { border-left-color: #f59e0b; } /* Amber */
-.request-card.status-confirmed { border-left-color: #22c55e; } /* Green */
-.request-card.status-rejected { border-left-color: #ef4444; } /* Red */
+.request-card.status-pending { border-left-color: #f59e0b; }
+.request-card.status-confirmed { border-left-color: #22c55e; }
+.request-card.status-rejected { border-left-color: #ef4444; }
 
 
 .card-header {
@@ -66,6 +63,7 @@
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .status-pill-pending { background-color: #fef3c7; color: #92400e; }
@@ -110,7 +108,7 @@
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
-  margin-top: auto; /* Pushes this section to the bottom */
+  margin-top: auto;
 }
 
 .price-section span {
@@ -156,4 +154,29 @@
 }
 .btn-confirm:hover {
   background-color: #16a34a;
+}
+
+/* --- Responsive Styles for Mobile --- */
+@media (max-width: 768px) {
+  .request-page-container {
+    padding: 1.5rem;
+  }
+
+  .requests-grid {
+    grid-template-columns: 1fr; /* Switch to a single column layout */
+  }
+  
+  .request-page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .request-details {
+    flex-direction: column; /* Stack details vertically */
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 }

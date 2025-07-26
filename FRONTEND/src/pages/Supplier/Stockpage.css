@@ -31,7 +31,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: white;
-  background-color: #22c55e; /* Primary green button color */
+  background-color: #22c55e;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -40,13 +40,13 @@
 }
 
 .add-item-button:hover {
-  background-color: #16a34a; /* Darker green on hover */
+  background-color: #16a34a;
   transform: translateY(-2px);
   box-shadow: 0 7px 20px rgba(34, 197, 94, 0.4);
 }
 
 .stock-table-container {
-  background-color: #ffffff; /* White background for the table container for contrast */
+  background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
   overflow: hidden;
@@ -65,15 +65,15 @@
 }
 
 .stock-table td button{
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    margin: 0px 5px;
-    transition: transform 0.3s ease; 
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  margin: 0px 5px;
+  transition: transform 0.3s ease; 
 }
 
 .stock-table td button:hover{
-    transform: scale(1.11);
+  transform: scale(1.11);
 }
 
 .stock-table th {
@@ -95,7 +95,6 @@
   font-weight: 500;
 }
 
-/* This creates the green "zebra striping" for even rows */
 .stock-table tbody tr:nth-child(even) {
   background-color: #f0fdf4; 
 }
@@ -104,14 +103,16 @@
   border-bottom: none;
 }
 
-/* A slightly more visible green for the hover effect */
 .stock-table tbody tr:hover {
   background-color: #dcfce7; 
 }
 
-/* --- Styles for the Add Item Modal (Green Theme) --- */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
 
-/* The full-screen dark background behind the modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -126,7 +127,6 @@
   backdrop-filter: blur(4px);
 }
 
-/* The white pop-up box for the form */
 .modal-content {
   background-color: #ffffff;
   padding: 2.5rem;
@@ -136,7 +136,6 @@
   max-width: 500px;
 }
 
-/* The title "Add New Stock Item" */
 .modal-content h2 {
   font-size: 1.5rem;
   color: #1f2937;
@@ -145,12 +144,10 @@
   text-align: center;
 }
 
-/* The container for each label and input field */
 .form-group {
   margin-bottom: 1.25rem;
 }
 
-/* The labels for the input fields */
 .form-group label {
   display: block;
   font-size: 0.9rem;
@@ -159,7 +156,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* The input fields themselves */
 .form-group input {
   width: 100%;
   padding: 0.8rem 1rem;
@@ -171,14 +167,12 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* The style for when an input field is focused (clicked on) */
 .form-group input:focus {
   outline: none;
-  border-color: #22c55e; /* Green focus color */
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); /* Green focus shadow */
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
 }
 
-/* The container for the Cancel and Add Item buttons */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -186,13 +180,12 @@
   margin-top: 2rem;
 }
 
-/* The main "Add Item" button */
 .modal-actions .btn-primary {
   padding: 0.75rem 1.5rem;
   font-size: 0.95rem;
   font-weight: 600;
   color: white;
-  background-color: #22c55e; /* Primary green color */
+  background-color: #22c55e;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -200,10 +193,9 @@
 }
 
 .modal-actions .btn-primary:hover {
-  background-color: #16a34a; /* Darker green on hover */
+  background-color: #16a34a;
 }
 
-/* The "Cancel" button */
 .modal-actions .btn-secondary {
   padding: 0.75rem 1.5rem;
   font-size: 0.95rem;
@@ -218,4 +210,61 @@
 
 .modal-actions .btn-secondary:hover {
   background-color: #d1d5db;
+}
+
+@media (max-width: 768px) {
+  .stock-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .stock-table-container {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .stock-table {
+    border: none;
+  }
+
+  .stock-table thead {
+    display: none;
+  }
+
+  .stock-table tr {
+    display: block;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .stock-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .stock-table td:last-child {
+    border-bottom: none;
+  }
+
+  .stock-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4b5563;
+    text-align: left;
+    margin-right: 1rem;
+  }
+
+  .stock-table td:first-child {
+    text-align: right;
+    width: auto;
+  }
 }
