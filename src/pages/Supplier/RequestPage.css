@@ -1,0 +1,159 @@
+/* Filename: src/pages/supplier/RequestPage.css */
+
+.request-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+.request-page-header {
+  margin-bottom: 2rem;
+}
+
+.request-page-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.request-page-header p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.requests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.request-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid transparent; /* For status indication */
+  transition: all 0.3s ease;
+}
+
+/* Status border colors */
+.request-card.status-pending { border-left-color: #f59e0b; } /* Amber */
+.request-card.status-confirmed { border-left-color: #22c55e; } /* Green */
+.request-card.status-rejected { border-left-color: #ef4444; } /* Red */
+
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.status-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.status-pill-pending { background-color: #fef3c7; color: #92400e; }
+.status-pill-confirmed { background-color: #dcfce7; color: #166534; }
+.status-pill-rejected { background-color: #fee2e2; color: #991b1b; }
+
+
+.buyer-address {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.request-details {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item {
+  text-align: left;
+}
+
+.detail-item span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.detail-item strong {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.price-section {
+  background-color: var(--background-color);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto; /* Pushes this section to the bottom */
+}
+
+.price-section span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: block;
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-reject, .btn-confirm {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reject {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.btn-reject:hover {
+  background-color: #fecaca;
+}
+
+.btn-confirm {
+  background-color: #22c55e;
+  color: white;
+}
+.btn-confirm:hover {
+  background-color: #16a34a;
+}

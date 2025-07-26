@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 2. Define your color palette using CSS Variables */
+:root {
+  --primary-color: #4f46e5; /* A vibrant purple */
+  --primary-hover: #4338ca; /* A darker shade for hover */
+  --secondary-color: #10b981; /* A teal/green for success states */
+  
+  --background-color: #eef5cc; /* The main background for pages */
+  --surface-color: #C7EF00;    /* The background for cards, tables, etc. */
+  
+  --text-primary: #1a202c;     /* For headings and important text */
+  --text-secondary: #718096;   /* For paragraphs and less important text */
+  --text-on-primary: #ffffff;  /* Text that goes on a primary-colored background */
+  
+  --border-color: #e2e8f0;     /* For subtle borders */
+}
+
+/* 3. A simple CSS Reset for consistency across browsers */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 4. Global body styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 5. Global styles for links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+/* 6. A general container class for consistent page padding */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* 7. A global style for a primary button */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-on-primary);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(79, 70, 229, 0.3);
+}
+
+/* 8. A global style for a basic card */
+.card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #56f285;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4ade80;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #61c586;
+}
