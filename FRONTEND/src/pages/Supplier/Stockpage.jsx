@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Stockpage.css'; 
 
 const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
-  const [name, setName] = useState('');
+  const [product, setName] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [rate, setRate] = useState('');
+  const [price, setRate] = useState('');
 
   useEffect(() => {
     if (itemToEdit) {
-      setName(itemToEdit.name);
+      setName(itemToEdit.product);
       setQuantity(itemToEdit.quantity);
-      setRate(itemToEdit.rate);
+      setRate(itemToEdit.price);
     } else {
       setName('');
       setQuantity('');
@@ -26,9 +27,9 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
     event.preventDefault();
     onSave({
       ...itemToEdit, 
-      name,
+      product,
       quantity,
-      rate,
+      price,
     });
     onClose();
   };
@@ -41,7 +42,7 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
           
           <div className="form-group">
             <label htmlFor="itemName">Raw Material Name</label>
-            <input type="text" id="itemName" value={name} onChange={e => setName(e.target.value)} required />
+            <input type="text" id="itemName" value={product} onChange={e => setName(e.target.value)} required />
           </div>
           
           <div className="form-group">
@@ -51,7 +52,7 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
 
           <div className="form-group">
             <label htmlFor="rate">Rate (e.g., ₹25/kg)</label>
-            <input type="text" id="rate" value={rate} onChange={e => setRate(e.target.value)} required />
+            <input type="text" id="rate" value={price} onChange={e => setRate(e.target.value)} required />
           </div>
 
           <div className="modal-actions">
@@ -66,18 +67,29 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
 
 
 const Stockpage = () => {
-  const initialStock = [
-    { id: 1, name: 'Potatoes', quantity: '150 kg', rate: '₹25/kg' },
-    { id: 2, name: 'Onions', quantity: '120 kg', rate: '₹30/kg' },
-    { id: 3, name: 'Tomatoes', quantity: '80 kg', rate: '₹40/kg' },
-    { id: 4, name: 'Gram Flour (Besan)', quantity: '50 kg', rate: '₹80/kg' },
-    { id: 5, name: 'Cooking Oil', quantity: '75 Litres', rate: '₹110/Litre' },
-    { id: 6, name: 'Spices Mix', quantity: '25 kg', rate: '₹250/kg' },
-  ];
-
-  const [stockItems, setStockItems] = useState(initialStock);
+  const [stockItems, setStockItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch all stock items on mount
+  useEffect(() => {
+    fetchStockItems();
+  }, []);
+
+  const fetchStockItems = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get('http://localhost:3001/api/v1/stock/all'); // You may need to create this endpoint or fetch all items another way
+      setStockItems(res.data.data || []);
+    } catch (err) {
+      setError('Failed to fetch stock items');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOpenModal = (item = null) => {
     setCurrentItem(item);
@@ -89,16 +101,39 @@ const Stockpage = () => {
     setCurrentItem(null);
   };
 
-  const handleSaveItem = (itemData) => {
-    if (currentItem && itemData.id) {
-      setStockItems(stockItems.map(item => item.id === itemData.id ? itemData : item));
-    } else {
-      setStockItems([...stockItems, { ...itemData, id: Date.now() }]);
+  const handleSaveItem = async (itemData) => {
+    setError(null);
+    try {
+      // Ensure correct mapping and types
+      const payload = {
+        product: itemData.product,
+        quantity: Number(itemData.quantity),
+        price: Number(itemData.price),
+      };
+      if (currentItem && itemData._id) {
+        // Update
+        await axios.put(`http://localhost:3001/api/v1/stock/update/${itemData._id}`, payload);
+        handleCloseModal();
+        fetchStockItems();
+      } else {
+        // Add new
+        await axios.post('http://localhost:3001/api/v1/stock/stock', payload);
+        handleCloseModal();
+        fetchStockItems();
+      }
+    } catch (err) {
+      setError('Failed to save item');
     }
   };
 
-  const handleDeleteItem = (itemId) => {
-    setStockItems(stockItems.filter(item => item.id !== itemId));
+  const handleDeleteItem = async (itemId) => {
+    setError(null);
+    try {
+      await axios.delete(`http://localhost:3001/api/v1/stock/delete/${itemId}`);
+      fetchStockItems();
+    } catch (err) {
+      setError('Failed to delete item');
+    }
   };
 
   return (
@@ -133,24 +168,32 @@ const Stockpage = () => {
               </tr>
             </thead>
             <tbody>
-              {stockItems.map((item, index) => (
-                <tr key={item.id}>
-                  <td data-label="S.No.">{index + 1}</td> 
-                  <td data-label="Name">{item.name}</td>
-                  <td data-label="Quantity">{item.quantity}</td>
-                  <td data-label="Rate">{item.rate}</td>
-                  <td data-label="Actions">
-                    <div className="action-buttons">
-                      <button className="btn-update" onClick={() => handleOpenModal(item)}>
-                        <img src="/edit.svg" alt="edit" />
-                      </button>
-                      <button className="btn-delete" onClick={() => handleDeleteItem(item.id)}>
-                        <img src="/delete.svg" alt="delete" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {loading ? (
+                <tr><td colSpan="5">Loading...</td></tr>
+              ) : error ? (
+                <tr><td colSpan="5" style={{color: 'red'}}>{error}</td></tr>
+              ) : stockItems.length === 0 ? (
+                <tr><td colSpan="5">No stock items found.</td></tr>
+              ) : (
+                stockItems.map((item, index) => (
+                  <tr key={item._id}>
+                    <td data-label="S.No.">{index + 1}</td> 
+                    <td data-label="Name">{item.product || item.name}</td>
+                    <td data-label="Quantity">{item.quantity}</td>
+                    <td data-label="Rate">{item.price || item.rate}</td>
+                    <td data-label="Actions">
+                      <div className="action-buttons">
+                        <button className="btn-update" onClick={() => handleOpenModal(item)}>
+                          <img src="/edit.svg" alt="edit" />
+                        </button>
+                        <button className="btn-delete" onClick={() => handleDeleteItem(item._id)}>
+                          <img src="/delete.svg" alt="delete" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </main>

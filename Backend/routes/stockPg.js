@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Stock = require("../database/stock");
 
-router.post('/stock', async (req, res) => {
+router.post('/stock/stock', async (req, res) => {
     try {
         const { product, quantity, price,  } = req.body; // Added unit here for completeness
         console.log('POST /api/stock - Adding new item:', req.body);
@@ -30,7 +30,7 @@ router.post('/stock', async (req, res) => {
         res.status(500).json({ message: "Server error while adding item.", error: error.message });
     }
 })
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/stock/delete/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
         console.log(`DELETE /api/stock/${itemId} - Deleting item`);
@@ -46,7 +46,7 @@ router.delete('/delete/:id', async (req, res) => {
         res.status(500).json({ message: "Server error while deleting item.", error: error.message });
     }
 });
-router.put('/update/:id', async (req, res) => {
+router.put('/stock/update/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
         console.log(`PUT /api/stock/${itemId} - Updating item with:, req.body`);
@@ -69,7 +69,7 @@ router.put('/update/:id', async (req, res) => {
         res.status(500).json({ message: "Server error while updating item.", error: error.message });
     }
 });
-router.get('/find/:id', async (req, res) => {
+router.get('/stock/find/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
         console.log(`GET /api/stock/${itemId} - Fetching item`);
@@ -87,5 +87,16 @@ router.get('/find/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Server error while fetching item.", error: error.message });
     }
+});
+router.get('/stock/all', async (req, res) => {
+    try {
+        const items = await Stock.find();
+        res.status(200).json({
+            message: "All stock items fetched successfully",
+            data: items
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Server error while fetching all items.", error: error.message });
+    }
 });
 module.exports = router;
