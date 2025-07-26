@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import SupplierNavbar from './components/Layout/SupplierNavbar';
+import VendorNavbar from './components/Layout/VendorNavbar';
 import SDashboard from './pages/Supplier/SDashboard';
 import Stockpage from './pages/Supplier/Stockpage';
 import RequestPage from './pages/Supplier/RequestPage';
@@ -57,6 +58,7 @@ function App() {
 
         <Route path="/" element={<Navigate to="/supplier/dashboard" replace />} />
       </Routes>
+      {/* <VendorNavbar /> */}
     </BrowserRouter>
   );
 }
