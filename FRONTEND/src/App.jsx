@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import SupplierNavbar from './components/Layout/SupplierNavbar';
 import VendorNavbar from './components/Layout/VendorNavbar';
+
+import LandingPage from './pages/PublicP/LandingPage';
 import SDashboard from './pages/Supplier/SDashboard';
 import Stockpage from './pages/Supplier/Stockpage';
 import RequestPage from './pages/Supplier/RequestPage';
 import SupplierOrderH from './pages/Supplier/SupplierOrderH';
 import ProfilePage from './pages/Supplier/ProfilePage';
 import EditProfilePage from './pages/Supplier/EditProfilePage';
-import MapView from './pages/Supplier/MapView';
+
+const AppLayout = () => {
+  const location = useLocation();
+  const isVendorRoute = location.pathname.startsWith('/vendor');
+  const isSupplierRoute = location.pathname.startsWith('/supplier');
+
+  return (
+    <>
+      {isVendorRoute && <VendorNavbar />}
+      {isSupplierRoute && <SupplierNavbar />}
+      <Outlet />
+    </>
+  );
+};
 
 function App() {
   const [requests, setRequests] = useState([
@@ -23,7 +38,6 @@ function App() {
 
   const handleConfirmRequest = (requestToConfirm) => {
     setRequests(currentRequests => currentRequests.filter(req => req.id !== requestToConfirm.id));
-
     const newOrder = {
       id: `ORD-${Date.now()}`,
       productName: requestToConfirm.item,
@@ -34,31 +48,33 @@ function App() {
       deliveryDate: requestToConfirm.deliveryDate,
       transactionType: 'Pending',
     };
-
     setOrders(currentOrders => [newOrder, ...currentOrders]);
   };
 
   const handleRejectRequest = (requestId) => {
     setRequests(currentRequests => currentRequests.filter(req => req.id !== requestId));
   };
+
   return (
-
     <BrowserRouter>
-      <SupplierNavbar />
       <Routes>
-        <Route path="/supplier/dashboard" element={<SDashboard />} />
-        <Route path="/supplier/stock" element={<Stockpage />} />
-        <Route path="/supplier/requests"
-          element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />} />
-        <Route path="/supplier/order-history"
-          element={<SupplierOrderH orders={orders} setOrders={setOrders} />} />
-        <Route path="/supplier/profile" element={<ProfilePage />} />
-        <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+        <Route path="/" element={<LandingPage />} />
 
-
-        <Route path="/" element={<Navigate to="/supplier/dashboard" replace />} />
+        <Route element={<AppLayout />}>
+          <Route path="/supplier/dashboard" element={<SDashboard />} />
+          <Route path="/supplier/stock" element={<Stockpage />} />
+          <Route 
+            path="/supplier/requests" 
+            element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />} 
+          />
+          <Route 
+            path="/supplier/order-history" 
+            element={<SupplierOrderH orders={orders} setOrders={setOrders} />} 
+          />
+          <Route path="/supplier/profile" element={<ProfilePage />} />
+          <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+        </Route>
       </Routes>
-      {/* <VendorNavbar /> */}
     </BrowserRouter>
   );
 }
