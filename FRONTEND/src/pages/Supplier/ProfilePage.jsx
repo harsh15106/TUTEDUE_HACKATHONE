@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { Link } from 'react-router-dom';
 import './ProfilePage.css'
 
 const ProfilePage = () => {
@@ -31,7 +32,7 @@ const ProfilePage = () => {
             <p>{supplierData.tagline}</p>
           </div>
           <div className="profile-actions">
-            <button className="btn-edit-profile">Edit Profile</button>
+            <Link to="/supplier/profile/edit" className="btn-edit-profile">Edit Profile</Link>
           </div>
         </div>
       </header>
