@@ -142,10 +142,10 @@ const Stockpage = () => {
                   <td data-label="Actions">
                     <div className="action-buttons">
                       <button className="btn-update" onClick={() => handleOpenModal(item)}>
-                        <img src="/edit.svg" alt="edit" />
+                        <img src="/src/assets/edit.svg" alt="edit" />
                       </button>
                       <button className="btn-delete" onClick={() => handleDeleteItem(item.id)}>
-                        <img src="/delete.svg" alt="delete" />
+                        <img src="/src/assets/delete.svg" alt="delete" />
                       </button>
                     </div>
                   </td>

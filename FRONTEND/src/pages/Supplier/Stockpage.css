@@ -111,6 +111,7 @@
   display: flex;
   justify-content: center;
   gap: 0.75rem;
+  margin-left:-6.5rem ;
 }
 
 .modal-overlay {

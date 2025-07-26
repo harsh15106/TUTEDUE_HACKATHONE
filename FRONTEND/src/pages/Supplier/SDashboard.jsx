@@ -38,12 +38,12 @@ const SDashboard = () => {
               </div>
             </Link>
 
-            <Link to="/supplier/mapview" className="stat-card-link">
+            {/* <Link to="/supplier/mapview" className="stat-card-link">
               <div className="stat-card">
                 <div className="stat-card-icon">🗺</div>
                 <p className="stat-card-title">Map View</p>
               </div>
-            </Link>
+            </Link> */}
           </section>
 
         </main>

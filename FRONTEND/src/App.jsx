@@ -8,6 +8,7 @@ import RequestPage from './pages/Supplier/RequestPage';
 import SupplierOrderH from './pages/Supplier/SupplierOrderH';
 import ProfilePage from './pages/Supplier/ProfilePage';
 import EditProfilePage from './pages/Supplier/EditProfilePage';
+import MapView from './pages/Supplier/MapView';
 
 function App() {
   const [requests, setRequests] = useState([
@@ -52,6 +53,7 @@ function App() {
           element={<SupplierOrderH orders={orders} setOrders={setOrders} />} />
         <Route path="/supplier/profile" element={<ProfilePage />} />
         <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+
 
         <Route path="/" element={<Navigate to="/supplier/dashboard" replace />} />
       </Routes>
