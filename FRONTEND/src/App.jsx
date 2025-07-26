@@ -1,11 +1,13 @@
-import React,{useState}from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+import SupplierNavbar from './components/Layout/SupplierNavbar';
 import SDashboard from './pages/Supplier/SDashboard';
 import Stockpage from './pages/Supplier/Stockpage';
 import RequestPage from './pages/Supplier/RequestPage';
 import SupplierOrderH from './pages/Supplier/SupplierOrderH';
-import SupplierNavbar from './components/Layout/SupplierNavbar';
+import ProfilePage from './pages/Supplier/ProfilePage';
+import EditProfilePage from './pages/Supplier/EditProfilePage';
 
 function App() {
   const [requests, setRequests] = useState([
@@ -19,7 +21,7 @@ function App() {
 
   const handleConfirmRequest = (requestToConfirm) => {
     setRequests(currentRequests => currentRequests.filter(req => req.id !== requestToConfirm.id));
-    
+
     const newOrder = {
       id: `ORD-${Date.now()}`,
       productName: requestToConfirm.item,
@@ -30,7 +32,7 @@ function App() {
       deliveryDate: requestToConfirm.deliveryDate,
       transactionType: 'Pending',
     };
-    
+
     setOrders(currentOrders => [newOrder, ...currentOrders]);
   };
 
@@ -44,11 +46,13 @@ function App() {
       <Routes>
         <Route path="/supplier/dashboard" element={<SDashboard />} />
         <Route path="/supplier/stock" element={<Stockpage />} />
-        <Route path="/supplier/requests" 
-          element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />}/>
-        <Route path="/supplier/order-history" 
-          element={<SupplierOrderH orders={orders} setOrders={setOrders} />}  />
-        
+        <Route path="/supplier/requests"
+          element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />} />
+        <Route path="/supplier/order-history"
+          element={<SupplierOrderH orders={orders} setOrders={setOrders} />} />
+        <Route path="/supplier/profile" element={<ProfilePage />} />
+        <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+
         <Route path="/" element={<Navigate to="/supplier/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
