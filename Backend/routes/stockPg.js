@@ -2,13 +2,13 @@ const router = require("express").Router();
 const Stock = require("../database/stock");
 
 router.post('/stock/stock', async (req, res) => {
-    try {
+    try {        // Basic validation
+        if (!product || quantity === undefined || price === undefined) {
+            return res.status(400).json({ message: 'Missing required fields: product, quantity, and price are required.' });
+
         const { product, quantity, price,  } = req.body; // Added unit here for completeness
         console.log('POST /api/stock - Adding new item:', req.body);
 
-        // Basic validation
-        if (!product || quantity === undefined || price === undefined) {
-            return res.status(400).json({ message: 'Missing required fields: product, quantity, and price are required.' });
         }
 
         // Create a new stock document
