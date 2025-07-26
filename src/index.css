@@ -78,3 +78,20 @@ a:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
   padding: 1.5rem;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #56f285;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4ade80;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #61c586;
+}
