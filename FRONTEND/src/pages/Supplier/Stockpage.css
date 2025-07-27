@@ -70,10 +70,32 @@
   border: none;
   margin: 0px 5px;
   transition: transform 0.3s ease; 
+  padding: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .stock-table td button:hover{
-  transform: scale(1.11);
+  transform: scale(1.1);
+  background-color: #f3f4f6;
+}
+
+.btn-update {
+  color: #059669;
+}
+
+.btn-update:hover {
+  background-color: #d1fae5 !important;
+}
+
+.btn-delete {
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background-color: #fee2e2 !important;
 }
 
 .stock-table th {

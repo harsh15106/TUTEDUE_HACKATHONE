@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Stockpage.css'; 
 
 const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
-  const [name, setName] = useState('');
+  const [product, setName] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [rate, setRate] = useState('');
+  const [price, setRate] = useState('');
 
   useEffect(() => {
     if (itemToEdit) {
-      setName(itemToEdit.name);
-      setQuantity(itemToEdit.quantity);
-      setRate(itemToEdit.rate);
+      setName(itemToEdit.product);
+      setQuantity(itemToEdit.quantity.toString());
+      setRate(itemToEdit.price.toString());
     } else {
       setName('');
       setQuantity('');
@@ -24,11 +25,21 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    
+    // Validate that quantity and price are valid numbers
+    const quantityNum = parseFloat(quantity);
+    const priceNum = parseFloat(price);
+    
+    if (isNaN(quantityNum) || isNaN(priceNum)) {
+      alert('Please enter valid numbers for quantity and price');
+      return;
+    }
+    
     onSave({
       ...itemToEdit, 
-      name,
-      quantity,
-      rate,
+      product,
+      quantity: quantityNum,
+      price: priceNum,
     });
     onClose();
   };
@@ -41,17 +52,17 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
           
           <div className="form-group">
             <label htmlFor="itemName">Raw Material Name</label>
-            <input type="text" id="itemName" value={name} onChange={e => setName(e.target.value)} required />
+            <input type="text" id="itemName" value={product} onChange={e => setName(e.target.value)} required />
           </div>
           
           <div className="form-group">
-            <label htmlFor="quantity">Quantity (e.g., 100 kg)</label>
-            <input type="text" id="quantity" value={quantity} onChange={e => setQuantity(e.target.value)} required />
+            <label htmlFor="quantity">Quantity (e.g., 100)</label>
+            <input type="number" id="quantity" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" step="0.01" />
           </div>
 
           <div className="form-group">
-            <label htmlFor="rate">Rate (e.g., ₹25/kg)</label>
-            <input type="text" id="rate" value={rate} onChange={e => setRate(e.target.value)} required />
+            <label htmlFor="rate">Rate (e.g., 25)</label>
+            <input type="number" id="rate" value={price} onChange={e => setRate(e.target.value)} required min="0" step="0.01" />
           </div>
 
           <div className="modal-actions">
@@ -66,18 +77,30 @@ const ItemModal = ({ show, onClose, onSave, itemToEdit }) => {
 
 
 const Stockpage = () => {
-  const initialStock = [
-    { id: 1, name: 'Potatoes', quantity: '150 kg', rate: '₹25/kg' },
-    { id: 2, name: 'Onions', quantity: '120 kg', rate: '₹30/kg' },
-    { id: 3, name: 'Tomatoes', quantity: '80 kg', rate: '₹40/kg' },
-    { id: 4, name: 'Gram Flour (Besan)', quantity: '50 kg', rate: '₹80/kg' },
-    { id: 5, name: 'Cooking Oil', quantity: '75 Litres', rate: '₹110/Litre' },
-    { id: 6, name: 'Spices Mix', quantity: '25 kg', rate: '₹250/kg' },
-  ];
-
-  const [stockItems, setStockItems] = useState(initialStock);
+  const [stockItems, setStockItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch all stock items on mount
+  useEffect(() => {
+    fetchStockItems();
+  }, []);
+
+  const fetchStockItems = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get('http://localhost:3001/api/v1/stock/all');
+      setStockItems(res.data.data || []);
+    } catch (err) {
+      console.error('Error fetching stock items:', err);
+      setError('Failed to fetch stock items. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOpenModal = (item = null) => {
     setCurrentItem(item);
@@ -89,16 +112,47 @@ const Stockpage = () => {
     setCurrentItem(null);
   };
 
-  const handleSaveItem = (itemData) => {
-    if (currentItem && itemData.id) {
-      setStockItems(stockItems.map(item => item.id === itemData.id ? itemData : item));
-    } else {
-      setStockItems([...stockItems, { ...itemData, id: Date.now() }]);
+  const handleSaveItem = async (itemData) => {
+    setError(null);
+    try {
+      const payload = {
+        product: itemData.product,
+        quantity: itemData.quantity,
+        price: itemData.price,
+      };
+      
+      if (currentItem && itemData._id) {
+        // Update existing item
+        await axios.put(`http://localhost:3001/api/v1/stock/update/${itemData._id}`, payload);
+        alert('Item updated successfully!');
+      } else {
+        // Add new item
+        await axios.post('http://localhost:3001/api/v1/stock/stock', payload);
+        alert('Item added successfully!');
+      }
+      
+      handleCloseModal();
+      fetchStockItems();
+    } catch (err) {
+      console.error('Error saving item:', err);
+      setError(err.response?.data?.message || 'Failed to save item. Please try again.');
     }
   };
 
-  const handleDeleteItem = (itemId) => {
-    setStockItems(stockItems.filter(item => item.id !== itemId));
+  const handleDeleteItem = async (itemId) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) {
+      return;
+    }
+    
+    setError(null);
+    try {
+      await axios.delete(`http://localhost:3001/api/v1/stock/delete/${itemId}`);
+      alert('Item deleted successfully!');
+      fetchStockItems();
+    } catch (err) {
+      console.error('Error deleting item:', err);
+      setError(err.response?.data?.message || 'Failed to delete item. Please try again.');
+    }
   };
 
   return (
@@ -121,6 +175,19 @@ const Stockpage = () => {
           </button>
         </header>
         
+        {error && (
+          <div style={{ 
+            backgroundColor: '#fee2e2', 
+            color: '#dc2626', 
+            padding: '1rem', 
+            borderRadius: '8px', 
+            marginBottom: '1rem',
+            border: '1px solid #fecaca'
+          }}>
+            {error}
+          </div>
+        )}
+        
         <main className="stock-table-container">
           <table className="stock-table">
             <thead>
@@ -128,29 +195,42 @@ const Stockpage = () => {
                 <th>S.No.</th> 
                 <th>Raw Material Name</th>
                 <th>Quantity</th>
-                <th>Rate</th>
+                <th>Rate (₹)</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {stockItems.map((item, index) => (
-                <tr key={item.id}>
-                  <td data-label="S.No.">{index + 1}</td> 
-                  <td data-label="Name">{item.name}</td>
-                  <td data-label="Quantity">{item.quantity}</td>
-                  <td data-label="Rate">{item.rate}</td>
-                  <td data-label="Actions">
-                    <div className="action-buttons">
-                      <button className="btn-update" onClick={() => handleOpenModal(item)}>
-                        <img src="/src/assets/edit.svg" alt="edit" />
-                      </button>
-                      <button className="btn-delete" onClick={() => handleDeleteItem(item.id)}>
-                        <img src="/src/assets/delete.svg" alt="delete" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {loading ? (
+                <tr><td colSpan="5" style={{textAlign: 'center', padding: '2rem'}}>Loading...</td></tr>
+              ) : stockItems.length === 0 ? (
+                <tr><td colSpan="5" style={{textAlign: 'center', padding: '2rem', color: '#6b7280'}}>No stock items found. Add your first item to get started!</td></tr>
+              ) : (
+                stockItems.map((item, index) => (
+                  <tr key={item._id}>
+                    <td data-label="S.No.">{index + 1}</td> 
+                    <td data-label="Name">{item.product}</td>
+                    <td data-label="Quantity">{item.quantity}</td>
+                    <td data-label="Rate">₹{item.price}</td>
+                    <td data-label="Actions">
+                      <div className="action-buttons">
+                        <button className="btn-update" onClick={() => handleOpenModal(item)} title="Edit">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                          </svg>
+                        </button>
+                        <button className="btn-delete" onClick={() => handleDeleteItem(item._id)} title="Delete">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </main>
