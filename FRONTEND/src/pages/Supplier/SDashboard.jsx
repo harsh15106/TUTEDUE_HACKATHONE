@@ -46,7 +46,7 @@ const SDashboard = () => {
     <div className="dashboard-layout">
       <div className="greeting-section">
         <header className="dashboard-header">
-          <h1>Hello Rajesh Ji, Welcome!</h1>
+          <h1>Hello Supplier, Welcome!</h1>
           <p>Get a quick overview of your store's performance and pending tasks.</p>
         </header>
       </div>

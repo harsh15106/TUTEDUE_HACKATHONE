@@ -1,10 +1,24 @@
-import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 const LoginPage = () => {
-  const [isLogin, setIsLogin] = React.useState(true);
-  const [role, setRole] = React.useState('vendor');
+  const [isLogin, setIsLogin] = useState(true);
+  const [role, setRole] = useState('vendor');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isLogin) {
+      navigate('/vendor/dashboard');
+    } else {
+      if (role === 'vendor') {
+        navigate('/vendor/dashboard');
+      } else {
+        navigate('/supplier/dashboard');
+      }
+    }
+  };
 
   return (
     <div className="auth-page-container">
@@ -14,7 +28,7 @@ const LoginPage = () => {
           <p>{isLogin ? 'Login to continue to your dashboard.' : 'Sign up to get started with ApnaMandi.'}</p>
         </div>
 
-        <form className="auth-form">
+        <form className="auth-form" onSubmit={handleSubmit}>
           {!isLogin && (
             <div className="form-group">
               <label>Full Name</label>

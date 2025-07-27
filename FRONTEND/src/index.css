@@ -81,10 +81,12 @@ a:hover {
 
 ::-webkit-scrollbar {
   width: 8px;
+  background-color: #ffffff;
 }
 
 ::-webkit-scrollbar-track {
-  background: #56f285;
+  background: #ffffff;
+  border-radius: 20px;
 }
 
 ::-webkit-scrollbar-thumb {

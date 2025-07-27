@@ -1,9 +1,14 @@
-import React, {useState} from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import './ProfilePage.css'
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('details')
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+  navigate('/', { replace: true });
+};
 
   const supplierData = {
     name: 'Rajesh Kumar Supplies',
@@ -33,6 +38,7 @@ const ProfilePage = () => {
           </div>
           <div className="profile-actions">
             <Link to="/supplier/profile/edit" className="btn-edit-profile">Edit Profile</Link>
+            <button className="btn-signout" onClick={handleSignOut}>Sign Out</button>
           </div>
         </div>
       </header>

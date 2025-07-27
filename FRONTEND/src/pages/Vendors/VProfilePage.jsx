@@ -1,21 +1,14 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './VProfilePage.css'
 
-const VProfilePage = () => {
+const VProfilePage = ({ vendorData }) => {
   const [activeTab, setActiveTab] = useState('details')
+  const navigate = useNavigate();
 
-  const vendorData = {
-    name: 'Gupta Chaat Corner',
-    tagline: 'The Best Chaat in Bhopal',
-    profilePicture: 'https://placehold.co/150x150/dbeafe/1e40af?text=GC',
-    coverPhoto: 'https://placehold.co/1200x300/e0eafc/1e40af?text=Delicious+Street+Food',
-    address: '123, Main Bazaar, Bhopal, Madhya Pradesh',
-    phone: '+91 91234 56789',
-    email: 'gupta.chaat@example.com',
-    memberSince: 'July 2024',
-    topItems: ['Dahi Puri', 'Pani Puri', 'Aloo Tikki Chaat'],
-  }
+  const handleSignOut = () => {
+  navigate('/', { replace: true });
+};
 
   return (
     <div className="profile-page-container">
@@ -33,6 +26,7 @@ const VProfilePage = () => {
           </div>
           <div className="profile-actions">
             <Link to="/vendor/profile/edit" className="btn-edit-profile">Edit Profile</Link>
+            <button className="btn-signout" onClick={handleSignOut}>Sign Out</button>
           </div>
         </div>
       </header>
