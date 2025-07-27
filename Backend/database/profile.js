@@ -7,8 +7,8 @@ const user = new mongoose.Schema({
     avatar:   { type: String, default: "https://img.icons8.com/?size=100&id=7820&format=png&color=000000" },
     identity: {
         type: String,
-        default: "seller",
-        enum: ["vendor"],
+        
+        enum: ["vendor","supplier"],
     },
     phone:    { type: Number, required: true }
 }, { timestamps: true });

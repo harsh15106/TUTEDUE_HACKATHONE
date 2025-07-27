@@ -1,26 +1,76 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import './ProfilePage.css'
+import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
+import { Link, useNavigate } from 'react-router-dom';
+import './ProfilePage.css';
 
 const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState('details')
+  const [activeTab, setActiveTab] = useState('details');
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
-  navigate('/', { replace: true });
-};
+  // --- MODIFIED: Wrapped fetch logic in useCallback ---
+  // This function will fetch the latest profile data from the server.
+  const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login'); // Redirect if not logged in
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:3001/api/v1/profile/me', {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache' // Ask browser not to cache the result
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data.user);
+      } else {
+        // Handle cases where the token is invalid or expired
+        console.error("Failed to fetch profile, redirecting to login.");
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching the profile:", error);
+    }
+  }, [navigate]);
 
+  // --- MODIFIED: useEffect hook ---
+  // This now runs the fetch function when the page loads, and also adds
+  // an event listener to re-fetch every time the user focuses on the page.
+  useEffect(() => {
+    fetchProfile();
+
+    // Add event listener to re-fetch when the user navigates back to this page
+    window.addEventListener('focus', fetchProfile);
+
+    // Cleanup function to remove the listener when the component is unmounted
+    return () => {
+      window.removeEventListener('focus', fetchProfile);
+    };
+  }, [fetchProfile]);
+
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token'); // Clear the token on sign out
+    navigate('/', { replace: true });
+  };
+
+  if (!profile) return <div>Loading...</div>;
+
+  // This part remains the same, it will now use the fresh data
   const supplierData = {
-    name: 'Rajesh Kumar Supplies',
-    tagline: 'Fresh Produce Daily from Local Farms',
-    profilePicture: 'https://placehold.co/150x150/a7f3d0/14532d?text=RKS',
-    coverPhoto: 'https://placehold.co/1200x300/dcfce7/4d7c0f?text=Fresh+Vegetables',
-    address: '15, Sabzi Mandi, Bhopal, Madhya Pradesh',
-    phone: '+91 98765 43210',
-    email: 'rajesh.supplies@example.com',
-    memberSince: 'July 2024',
-    specialties: ['Potatoes', 'Onions', 'Tomatoes', 'Seasonal Greens'],
-  }
+    name: profile.username || 'Rajesh Kumar Supplies',
+    tagline: profile.tagline || 'Fresh Produce Daily from Local Farms',
+    profilePicture: profile.profilePic || 'https://placehold.co/150x150/a7f3d0/14532d?text=RKS',
+    coverPhoto: profile.coverPhoto || 'https://placehold.co/1200x300/dcfce7/4d7c0f?text=Fresh+Vegetables',
+    address: profile.address || '15, Sabzi Mandi, Bhopal, Madhya Pradesh',
+    phone: profile.phone || '+91 98765 43210',
+    email: profile.email || 'rajesh.supplies@example.com',
+    memberSince: profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'July 2024',
+    specialties: profile.specialties || ['Potatoes', 'Onions', 'Tomatoes', 'Seasonal Greens'],
+  };
 
   return (
     <div className="profile-page-container">
@@ -100,4 +150,4 @@ const ProfilePage = () => {
   )
 }
 
-export default ProfilePage
+export default ProfilePage;

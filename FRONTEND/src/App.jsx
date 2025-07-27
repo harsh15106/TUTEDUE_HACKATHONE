@@ -23,6 +23,7 @@ import RequestPage from './pages/Supplier/RequestPage'
 import SupplierOrderH from './pages/Supplier/SupplierOrderH'
 import ProfilePage from './pages/Supplier/ProfilePage'
 import EditProfilePage from './pages/Supplier/EditProfilePage'
+import SMP from './pages/Supplier/SMP'
 
 import VDashboard from './pages/Vendors/VDashboard'
 import VStockPage from './pages/Vendors/VStockPage'
@@ -86,7 +87,131 @@ const AppLayout = () => {
 }
 
 function App() {
-  // --- Remove legacy login/signup logic ---
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem('users');
+    return savedUsers ? JSON.parse(savedUsers) : [];
+  });
+  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem('users', JSON.stringify(users));
+  }, [users]);
+
+  const handleSignUp = (newUserData) => {
+    setUsers(currentUsers => [...currentUsers, newUserData]);
+  };
+
+  const handleLogin = (loginData) => {
+    const user = users.find(u => u.email === loginData.email && u.password === loginData.password);
+    if (user) {
+      if (user.role === 'vendor') {
+        navigate('/vendor/dashboard');
+      } else {
+        navigate('/supplier/dashboard');
+      }
+      return true;
+    }
+    return false;
+  };
+  
+  const initialVendorProfile = {
+    name: 'Gupta Chaat Corner',
+    tagline: 'The Best Chaat in Bhopal',
+    profilePicture: 'https://placehold.co/150x150/dbeafe/1e40af?text=GC',
+    coverPhoto: 'https://placehold.co/1200x300/e0eafc/1e40af?text=Delicious+Street+Food',
+    address: '123, Main Bazaar, Bhopal, Madhya Pradesh',
+    phone: '+91 91234 56789',
+    email: 'gupta.chaat@example.com',
+    memberSince: 'July 2024',
+    topItems: ['Dahi Puri', 'Pani Puri', 'Aloo Tikki Chaat'],
+  };
+
+  const [vendorProfile, setVendorProfile] = useState(() => {
+    const savedProfile = localStorage.getItem('vendorProfile');
+    return savedProfile ? JSON.parse(savedProfile) : initialVendorProfile;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('vendorProfile', JSON.stringify(vendorProfile));
+  }, [vendorProfile]);
+
+  const handleUpdateVendorProfile = (newProfileData) => {
+    setVendorProfile(prevProfile => ({ ...prevProfile, ...newProfileData }));
+  };
+
+  const [requests, setRequests] = useState([
+    { id: 'REQ-001', buyerName: 'Gupta Chaat Corner', buyerAddress: '123, Main Bazaar, Bhopal', item: 'Potatoes', quantity: '25 kg', deliveryDate: 'July 28, 2025', price: '₹625', status: 'Pending' },
+  ]);
+
+  const [orders, setOrders] = useState([
+    { id: 'ORD-104', productName: 'Cooking Oil', quantity: '75 Litres', status: 'Delivered', vendorName: "Rahul's Rolls", vendorAddress: '10, 10 Number Market, Bhopal', deliveryDate: 'July 22, 2025', transactionType: 'UPI' },
+  ]);
+  
+  const [sentRequests, setSentRequests] = useState([
+    { id: 'VREQ-001', supplierName: 'Rajesh Kumar Supplies', supplierAddress: '15, Sabzi Mandi, Bhopal', item: 'Potatoes', quantity: '25 kg', price: '₹625', status: 'Pending' },
+  ]);
+  
+  const [marketplacePosts, setMarketplacePosts] = useState([
+    { id: 1, name: 'Fresh Onions', address: '72, Wholesale Market, Indore', deliveryTime: '2 days', price: '₹30/kg', minQuantity: '20 kg', paymentModes: ['UPI', 'Bank'], tags: ['Trusted Retailer'] },
+    { id: 2, name: 'Premium Spices', address: '44, Spice Market, Ujjain', deliveryTime: 'Tomorrow', price: '₹250/kg', minQuantity: '5 kg', paymentModes: ['Cash'], tags: [] },
+  ]);
+
+  const [userMarketplacePosts, setUserMarketplacePosts] = useState([]);
+
+  const handleAddPost = (postData) => {
+    const newPost = {
+      id: Date.now(),
+      ...postData
+    };
+    setUserMarketplacePosts(currentPosts => [newPost, ...currentPosts]);
+    setMarketplacePosts(currentPosts => [newPost, ...currentPosts]);
+  };
+
+  const handleConfirmRequest = (requestToConfirm) => {
+    setRequests(currentRequests => currentRequests.filter(req => req.id !== requestToConfirm.id));
+    const newOrder = {
+      id: `ORD-${Date.now()}`,
+      productName: requestToConfirm.item,
+      quantity: requestToConfirm.quantity,
+      status: 'In Process',
+      vendorName: requestToConfirm.buyerName,
+      vendorAddress: requestToConfirm.buyerAddress,
+      deliveryDate: requestToConfirm.deliveryDate,
+      transactionType: 'Pending',
+    };
+    setOrders(currentOrders => [newOrder, ...currentOrders]);
+  };
+
+  const handleRejectRequest = (requestId) => {
+    setRequests(currentRequests => currentRequests.filter(req => req.id !== requestId));
+  };
+
+  const handleCancelSentRequest = (requestId) => {
+    setSentRequests(currentRequests => currentRequests.filter(req => req.id !== requestId));
+  };
+
+  const handleSendRequest = (requestDetails) => {
+    const newSentRequest = {
+      id: `VREQ-${Date.now()}`,
+      supplierName: requestDetails.supplierName,
+      supplierAddress: requestDetails.supplierAddress,
+      item: requestDetails.item,
+      quantity: requestDetails.quantity,
+      price: requestDetails.price,
+      status: 'Pending',
+    };
+    setSentRequests(current => [newSentRequest, ...current]);
+  };
+
+  const handleSendRefillRequest = (refillDetails) => {
+    const newSentRequest = {
+      id: `VREQ-${Date.now()}`,
+      ...refillDetails,
+      status: 'Pending',
+    };
+    setSentRequests(current => [newSentRequest, ...current]);
+  };
 
   return (
     <Routes>
@@ -122,33 +247,22 @@ function App() {
             </RequireAuth>
           } 
         />
-        <Route path="/supplier/profile" element={
-          <RequireAuth allowedRoles={['supplier']}>
-            <ProfilePage />
-          </RequireAuth>
-        } />
-        <Route path="/supplier/profile/edit" element={
-          <RequireAuth allowedRoles={['supplier']}>
-            <EditProfilePage />
-          </RequireAuth>
-        } />
+        <Route path="/supplier/profile" element={<ProfilePage />} />
+        <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+        <Route 
+          path="/supplier/marketplace" 
+          element={
+            <SMP 
+              allPosts={marketplacePosts}
+              userPosts={userMarketplacePosts}
+              onAddPost={handleAddPost}
+            />
+          } 
+        />
 
-        {/* Vendor protected routes */}
-        <Route path="/vendor/dashboard" element={
-          <RequireAuth allowedRoles={['vendor']}>
-            <VDashboard />
-          </RequireAuth>
-        } />
-        <Route path="/vendor/browse" element={
-          <RequireAuth allowedRoles={['vendor']}>
-            <VBrowseSuppliers />
-          </RequireAuth>
-        } />
-        <Route path="/vendor/stock" element={
-          <RequireAuth allowedRoles={['vendor']}>
-            <VStockPage />
-          </RequireAuth>
-        } />
+        <Route path="/vendor/dashboard" element={<VDashboard />} />
+        <Route path="/vendor/order" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
+        <Route path="/vendor/stock" element={<VStockPage />} />
         <Route 
           path="/vendor/requests" 
           element={

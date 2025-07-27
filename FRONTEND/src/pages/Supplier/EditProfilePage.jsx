@@ -1,28 +1,113 @@
-import React, { useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import './EditProfilePage.css'
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import axios from 'axios'; // Import axios
+import './EditProfilePage.css';
 
+// ====================================================================
+//  API Service
+// ====================================================================
+const API_URL = 'http://localhost:3001/api/v1';
+
+const profileApiService = {
+  // Fetches the current user's profile data
+  getProfile: (token) => {
+    return axios.get(`${API_URL}/profile/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+  // Updates the user's profile data
+  updateProfile: (profileData, token) => {
+    return axios.put(`${API_URL}/profile/update`, profileData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  }
+};
+
+
+// ====================================================================
+//  Main Edit Profile Page Component
+// ====================================================================
 const EditProfilePage = () => {
-  const [profilePic, setProfilePic] = useState('https://placehold.co/150x150/a7f3d0/14532d?text=RKS')
-  const [coverPhoto, setCoverPhoto] = useState('https://placehold.co/1200x300/dcfce7/4d7c0f?text=Fresh+Vegetables')
-  const [tagline, setTagline] = useState('Fresh Produce Daily from Local Farms')
+  const [profilePic, setProfilePic] = useState('https://placehold.co/150x150/a7f3d0/14532d?text=...');
+  const [coverPhoto, setCoverPhoto] = useState('https://placehold.co/1200x300/dcfce7/4d7c0f?text=...');
+  const [tagline, setTagline] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const profilePicInputRef = useRef(null)
-  const coverPhotoInputRef = useRef(null)
+  const navigate = useNavigate(); // Hook to redirect after saving
+
+  const profilePicInputRef = useRef(null);
+  const coverPhotoInputRef = useRef(null);
+
+  // Fetch existing profile data when the component loads
+  useEffect(() => {
+    const loadProfile = async () => {
+      const token = localStorage.getItem('token'); // Assuming you store the token in localStorage
+      if (!token) {
+        // Handle case where user is not logged in
+        navigate('/login');
+        return;
+      }
+      try {
+        const response = await profileApiService.getProfile(token);
+        const { user } = response.data;
+        if (user) {
+          setProfilePic(user.profilePic || 'https://placehold.co/150x150/a7f3d0/14532d?text=RKS');
+          setCoverPhoto(user.coverPhoto || 'https://placehold.co/1200x300/dcfce7/4d7c0f?text=Fresh+Vegetables');
+          setTagline(user.tagline || 'Fresh Produce Daily from Local Farms');
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        // Handle error, maybe show a notification
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProfile();
+  }, [navigate]);
 
   const handleFileChange = (event, setImage) => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result)
-      }
-      reader.readAsDataURL(file)
+        // The result is a base64 string, which we can save
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleRemoveProfilePic = () => {
-    setProfilePic('https://placehold.co/150x150/a7f3d0/14532d?text=RKS')
+    setProfilePic('https://placehold.co/150x150/a7f3d0/14532d?text=RKS');
+  };
+
+  // Function to handle the form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("You must be logged in to save changes.");
+      return;
+    }
+
+    const profileData = {
+      profilePic,
+      coverPhoto,
+      tagline
+    };
+
+    try {
+      await profileApiService.updateProfile(profileData, token);
+      alert("Profile updated successfully!");
+      navigate('/supplier/profile'); // Redirect to the profile page
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      alert("Failed to update profile. The image might be too large or there was a server error.");
+    }
+  };
+  
+  if (loading) {
+    return <div>Loading profile...</div>;
   }
 
   return (
@@ -33,7 +118,8 @@ const EditProfilePage = () => {
       </header>
 
       <main className="edit-profile-form-container">
-        <form className="edit-profile-form">
+        {/* Attach the handleSubmit function to the form's onSubmit event */}
+        <form className="edit-profile-form" onSubmit={handleSubmit}>
           <div className="form-section">
             <h3>Profile Picture</h3>
             <div className="profile-pic-editor">
@@ -93,7 +179,7 @@ const EditProfilePage = () => {
         </form>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default EditProfilePage
+export default EditProfilePage;
