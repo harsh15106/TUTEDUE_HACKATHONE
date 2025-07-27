@@ -6,7 +6,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
+  min-height: 100vh;
   padding: 2rem;
   background: linear-gradient(45deg, #7ef33a, #b3f48e, #bfefa3, #c7f1ae);
   background-size: 400% 400%;
@@ -19,7 +19,6 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
 .landing-content {
   max-width: 800px;
 }
@@ -29,6 +28,16 @@
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-title .highlight {
+  color: var(--primary-color);
+  margin-left: 2rem;
 }
 
 .landing-subtitle {
@@ -37,23 +46,31 @@
   margin-bottom: 3rem;
 }
 
-.btn-get-started {  
+.btn-get-started {
+  display: inline-flex;
+  align-items: center;
+
   padding: 0.8rem 2.5rem;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-on-primary);
+  color: #ffffff;
   background-color: var(--primary-color);
   border: none;
-  border-radius: 8px;
+  border-radius: 18px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
 }
 
+.arrow{
+  margin-left: 7rem;
+  
+}
+
 .btn-get-started:hover {
-  color: white;
+  color: #ffffff;
   text-decoration: none;
-  transform: translateY(-2px);
+  transform: scale(1.05);
   box-shadow: 0 7px 20px rgba(79, 70, 229, 0.4);
 }
 
@@ -115,6 +132,14 @@
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  cursor: pointer;
+  
+}
+
+
+.review-card:hover {
+  transform: scale(1.02)
+
 }
 
 .review-column {
@@ -128,6 +153,7 @@
   border-radius: 12px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  animation: all 0.3s ease;
 }
 
 .review-comment {
@@ -161,7 +187,6 @@
 .star.filled {
   color: #f59e0b;
 }
-
 
 .faq-list {
   max-width: 800px;
@@ -228,5 +253,6 @@
 @media (max-width: 768px) {
   .landing-title {
     font-size: 2.5rem;
+    height: 4rem;
   }
 }
