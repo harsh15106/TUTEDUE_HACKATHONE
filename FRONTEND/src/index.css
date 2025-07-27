@@ -95,3 +95,17 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #61c586;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-content {
+  flex-grow: 1;
+}

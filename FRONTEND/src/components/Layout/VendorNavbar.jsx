@@ -25,7 +25,7 @@ const VendorNavbar = () => {
   return (
     <div>
       <nav>
-        <Link to="/vendor/dashboard" className='Apna'>ApnaMandi</Link>
+        <Link to="/vendor/dashboard" className='Apna'>ApniMandi</Link>
         <button className="hamburger-menu" onClick={toggleMobileMenu}><img src="/src/assets/hamburger.svg" alt="" />
         </button>
         <ul className="desktop-nav">
@@ -33,7 +33,7 @@ const VendorNavbar = () => {
           {/* <li><Link to="/vendor/stock">Stock</Link></li> */}
           <li><Link to="/vendor/requests">Refill</Link></li>
           <li><Link to="/vendor/order-history">Order History</Link></li>
-           <li><Link to="/vendor/order">Order</Link></li>
+           <li><Link to="/vendor/order">Marketplace</Link></li>
           <li><Link to="/vendor/profile">Profile</Link></li>
 
 

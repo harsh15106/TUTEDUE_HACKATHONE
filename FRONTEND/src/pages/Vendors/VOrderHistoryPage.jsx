@@ -62,9 +62,14 @@ const VOrderHistoryPage = () => {
   };
 
   const handlePaymentMethodChange = (orderId, newMethod) => {
-    setOrders(orders.map(order =>
+    const updatedOrders = orders.map(order =>
       order.id === orderId ? { ...order, paymentMethod: newMethod } : order
-    ));
+    );
+    setOrders(updatedOrders);
+
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder(prev => ({ ...prev, paymentMethod: newMethod }));
+    }
   };
 
   return (
