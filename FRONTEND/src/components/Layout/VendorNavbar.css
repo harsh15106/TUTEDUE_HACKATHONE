@@ -1,11 +1,6 @@
 nav {
   display: flex;
-<<<<<<< HEAD
-  justify-content: center;
-  gap: 40%;
-=======
   justify-content: space-between;
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
   align-items: center;
   padding: 0 2rem;
   height: 70px;
@@ -23,14 +18,6 @@ nav {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
-<<<<<<< HEAD
-}
-
-.Apna:hover {
-  text-decoration: none;
-}
-
-=======
   text-decoration: none;
 }
 
@@ -95,7 +82,6 @@ nav {
 }
 
 
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
 .desktop-nav {
   display: flex;
   gap: 2.5rem;
@@ -110,10 +96,7 @@ nav {
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease-in-out;
-<<<<<<< HEAD
-=======
   text-decoration: none;
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
 }
 
 .desktop-nav li a:hover {
@@ -122,65 +105,11 @@ nav {
   border-bottom-color: var(--primary-color);
 }
 
-<<<<<<< HEAD
-.button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.button img {
-  height: 24px;
-  width: 24px;
-}
-
-.dropdown-container {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 180%;
-  right: 0;
-  background-color: var(--surface-color);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  padding: 0.5rem;
-  width: 180px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  list-style-type: none;
-}
-
-.dropdown-menu li a {
-  display: block;
-  padding: 0.75rem 1rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  border-bottom: none;
-}
-
-.dropdown-menu li a:hover {
-  color: var(--primary-color);
-  border-bottom-color: transparent;
-  background-color: var(--background-color);
-  border-radius: 8px;
-}
-
-=======
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
 .hamburger-menu {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
-<<<<<<< HEAD
-  color: var(--text-primary);
-=======
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
 }
 
 .mobile-nav-overlay {
@@ -243,11 +172,4 @@ nav {
     border-top: 1px solid var(--border-color);
     margin: 0.5rem 0;
   }
-<<<<<<< HEAD
-
-  .close-menu {
-    display: none;
-  }
-=======
->>>>>>> 054fb9dd109098cade34c49422a8932b21b26df4
 }

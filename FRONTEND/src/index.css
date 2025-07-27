@@ -84,11 +84,11 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: #56f285;
+  background: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #4ade80;
+  background-color: #01fc4c;
   border-radius: 20px;
 }
 

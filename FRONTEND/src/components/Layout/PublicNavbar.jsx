@@ -11,7 +11,7 @@ const PublicNavbar = () => {
         <li><a href="#about">About</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
-      <Link to="/auth" className="btn-login-signup">Login/Sign Up</Link>
+      <Link to="/auth" className="btn-login-signup">Login</Link>
     </nav>
   );
 };
