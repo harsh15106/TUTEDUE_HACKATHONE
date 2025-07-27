@@ -23,6 +23,7 @@ import RequestPage from './pages/Supplier/RequestPage'
 import SupplierOrderH from './pages/Supplier/SupplierOrderH'
 import ProfilePage from './pages/Supplier/ProfilePage'
 import EditProfilePage from './pages/Supplier/EditProfilePage'
+import SMP from './pages/Supplier/SMP'
 
 import VDashboard from './pages/Vendors/VDashboard'
 import VStockPage from './pages/Vendors/VStockPage'
@@ -106,20 +107,14 @@ function App() {
 
   const [vendorProfile, setVendorProfile] = useState(() => {
     const savedProfile = localStorage.getItem('vendorProfile');
-    // DEBUG: Log what is being loaded from localStorage
-    console.log('Loading profile from localStorage:', savedProfile);
     return savedProfile ? JSON.parse(savedProfile) : initialVendorProfile;
   });
 
   useEffect(() => {
-    // DEBUG: Log what is being saved to localStorage
-    console.log('Saving profile to localStorage:', vendorProfile);
     localStorage.setItem('vendorProfile', JSON.stringify(vendorProfile));
   }, [vendorProfile]);
 
   const handleUpdateVendorProfile = (newProfileData) => {
-    // DEBUG: Log the data received from the Edit Profile page
-    console.log('handleUpdateVendorProfile called with:', newProfileData);
     setVendorProfile(prevProfile => ({ ...prevProfile, ...newProfileData }));
   };
 
@@ -134,6 +129,22 @@ function App() {
   const [sentRequests, setSentRequests] = useState([
     { id: 'VREQ-001', supplierName: 'Rajesh Kumar Supplies', supplierAddress: '15, Sabzi Mandi, Bhopal', item: 'Potatoes', quantity: '25 kg', price: '₹625', status: 'Pending' },
   ]);
+  
+  const [marketplacePosts, setMarketplacePosts] = useState([
+    { id: 1, name: 'Fresh Onions', address: '72, Wholesale Market, Indore', deliveryTime: '2 days', price: '₹30/kg', minQuantity: '20 kg', paymentModes: ['UPI', 'Bank'], tags: ['Trusted Retailer'] },
+    { id: 2, name: 'Premium Spices', address: '44, Spice Market, Ujjain', deliveryTime: 'Tomorrow', price: '₹250/kg', minQuantity: '5 kg', paymentModes: ['Cash'], tags: [] },
+  ]);
+
+  const [userMarketplacePosts, setUserMarketplacePosts] = useState([]);
+
+  const handleAddPost = (postData) => {
+    const newPost = {
+      id: Date.now(),
+      ...postData
+    };
+    setUserMarketplacePosts(currentPosts => [newPost, ...currentPosts]);
+    setMarketplacePosts(currentPosts => [newPost, ...currentPosts]);
+  };
 
   const handleConfirmRequest = (requestToConfirm) => {
     setRequests(currentRequests => currentRequests.filter(req => req.id !== requestToConfirm.id));
@@ -199,9 +210,19 @@ function App() {
         />
         <Route path="/supplier/profile" element={<ProfilePage />} />
         <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+        <Route 
+          path="/supplier/marketplace" 
+          element={
+            <SMP 
+              allPosts={marketplacePosts}
+              userPosts={userMarketplacePosts}
+              onAddPost={handleAddPost}
+            />
+          } 
+        />
 
         <Route path="/vendor/dashboard" element={<VDashboard />} />
-        <Route path="/vendor/browse" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
+        <Route path="/vendor/order" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
         <Route path="/vendor/stock" element={<VStockPage />} />
         <Route 
           path="/vendor/requests" 

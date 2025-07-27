@@ -35,6 +35,7 @@ const SupplierNavbar = () => {
                 <li><Link to="/supplier/stock">Stock</Link></li>
                 <li><Link to="/supplier/requests">Request</Link></li>
                 <li><Link to="/supplier/order-history">Order History</Link></li>
+                <li><Link to="/supplier/marketplace">Marketplace</Link></li>
                 <li><Link to="/supplier/profile">Profile</Link></li>
             </ul>
 
@@ -46,6 +47,7 @@ const SupplierNavbar = () => {
                         <li><Link to="/supplier/requests" onClick={handleLinkClick}>Request</Link></li>
                         <hr />
                         <li><Link to="/supplier/order-history" onClick={handleLinkClick}>Order History</Link></li>
+                        <li><Link to="/supplier/marketplace" onClick={handleLinkClick}>Marketplace</Link></li>
                         <li><Link to="/supplier/profile" onClick={handleLinkClick}>Profile</Link></li>
                     </ul>
                 </div>
