@@ -118,6 +118,44 @@ router.get('/requests/pending', async (req, res) => {
         res.status(500).json({ message: "Server error while fetching pending requests.", error: error.message });
     }
 });
+// Add this to your routes/RequestBySeller.js file
+
+router.get('/requests/all', async (req, res) => {
+  try {
+    const allRequests = await RequestBySeller.find({})
+      .sort({ createdAt: 'desc' }); // Find all requests
+
+    res.status(200).json({
+      message: "All request items fetched successfully",
+      data: allRequests // Send them back in the 'data' property
+    });
+
+  } catch (error) {
+    console.error("Server error while fetching all requests:", error);
+    res.status(500).json({ message: "Server error while fetching all requests." });
+  }
+});
+
+// --- NEW ROUTE: Delete/Cancel a request ---
+// This handles the request from the "Cancel Request" button
+router.delete('/requests/:id', async (req, res) => {
+    try {
+        const requestId = req.params.id;
+
+        const deletedItem = await RequestBySeller.findByIdAndDelete(requestId);
+
+        if (!deletedItem) {
+            return res.status(404).json({ message: `Request with ID ${requestId} not found.` });
+        }
+
+        res.status(200).json({ message: `Request with ID ${requestId} was successfully deleted.` });
+
+    } catch (error) {
+        console.error("Server error while deleting request:", error);
+        res.status(500).json({ message: "Server error while deleting request.", error: error.message });
+    }
+});
+
 
 
 module.exports = router;
