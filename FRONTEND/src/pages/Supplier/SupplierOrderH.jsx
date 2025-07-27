@@ -6,7 +6,8 @@ import ChatModal from '/src/components/chat/ChatModal';
 // ====================================================================
 //  API Service Layer
 // ====================================================================
-const API_URL = 'http://localhost:3001/api/v1'; // CORRECTED: Port changed back to 5001
+// CORRECTED: Port changed to 5001 as per your comment
+const API_URL = 'http://localhost:5001/api/v1'; 
 
 const apiService = {
   fetchOrders: () => {
@@ -20,7 +21,7 @@ const apiService = {
 // ====================================================================
 //  Order Details Modal Component
 // ====================================================================
-const OrderDetailsModal = ({ show, order, onClose, onCancelOrder, onOpenChat }) => {
+const OrderDetailsModal = ({ show, order, onClose, onOpenChat }) => {
   if (!show || !order) return null;
 
   const formattedDate = order.deliveryBy ? new Date(order.deliveryBy).toLocaleDateString() : 'N/A';
@@ -34,16 +35,20 @@ const OrderDetailsModal = ({ show, order, onClose, onCancelOrder, onOpenChat }) 
           <div className="detail-field"><span>Quantity</span><strong>{order.quantity} kg</strong></div>
           <div className="detail-field"><span>Vendor Name</span><strong>{order.name}</strong></div>
           <div className="detail-field"><span>Vendor Address</span><strong>{order.location}</strong></div>
+          <div className="detail-field"><span>Vendor Mobile</span><strong>{order.vendorMobile}</strong></div>
           <div className="detail-field"><span>Delivery Date</span><strong>{formattedDate}</strong></div>
+          <div className="detail-field"><span>Payment Method</span><strong>{order.transactionType}</strong></div>
         </div>
+        
+        {/* UPDATED: Added a "Call Vendor" button and placed it in a grid with the chat button */}
         <div className="contact-actions">
+          <a href={`tel:${order.vendorMobile}`} className="btn-call">Call Vendor</a>
           <button type="button" className="btn-chat" onClick={() => onOpenChat(order.name)}>Chat with Vendor</button>
         </div>
+
         <div className="modal-actions">
           <button type="button" className="btn-secondary" onClick={onClose}>Close</button>
-          {order.status !== 'Cancelled' && (
-            <button type="button" className="btn-primary" onClick={() => onCancelOrder(order._id)}>Cancel Order</button>
-          )}
+          {/* REMOVED: Cancel order button is no longer present */}
         </div>
       </div>
     </div>
@@ -68,7 +73,7 @@ const SupplierOrderH = () => {
       const response = await apiService.fetchOrders();
       setOrders(response.data);
     } catch (err) {
-      setError('Failed to fetch order history. Please ensure the backend server is running on port 5001.');
+      setError('Failed to fetch order history. Please ensure the backend server is running.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -93,11 +98,7 @@ const SupplierOrderH = () => {
     }
   };
 
-  const handleCancelOrder = (orderId) => {
-    handleStatusChange(orderId, 'Cancelled');
-    setIsDetailsModalOpen(false);
-    setSelectedOrder(null);
-  };
+  // REMOVED: handleCancelOrder function is no longer needed.
 
   const handleRowClick = (order) => {
     setSelectedOrder(order);
@@ -105,9 +106,9 @@ const SupplierOrderH = () => {
   };
 
   const renderTableContent = () => {
-    if (isLoading) return <tr><td colSpan="4">Loading orders...</td></tr>;
+    if (isLoading) return <tr><td colSpan="4" className="text-center">Loading orders...</td></tr>;
     if (error) return <tr><td colSpan="4" className="error-message">{error}</td></tr>;
-    if (orders.length === 0) return <tr><td colSpan="4">No order history found.</td></tr>;
+    if (orders.length === 0) return <tr><td colSpan="4" className="text-center">No order history found.</td></tr>;
     
     return orders.map((order, index) => (
       <tr key={order._id} onClick={() => handleRowClick(order)}>
@@ -138,8 +139,8 @@ const SupplierOrderH = () => {
         show={isDetailsModalOpen}
         order={selectedOrder}
         onClose={() => setIsDetailsModalOpen(false)}
-        onCancelOrder={handleCancelOrder}
         onOpenChat={() => setIsChatModalOpen(true)}
+        // REMOVED: onCancelOrder prop is no longer passed
       />
       
       {selectedOrder && (
