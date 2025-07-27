@@ -5,8 +5,13 @@ app.use(cors());
 const dotenv = require("dotenv").config();
 require("./database/connect");
 const stock = require("./routes/stockPg")
-const requestRoutes = require ("./routes/RequestBySeller");
 app.use(express.json());
+const requestRoutes = require ("./routes/RequestBySeller");
+const authRoutes = require('./routes/auth');
+
+
+
+app.use('/api/v1/auth', authRoutes);
 app.use("/api/v1",stock);
 
 //const stock=require("./routes/stockPg");

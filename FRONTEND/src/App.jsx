@@ -32,6 +32,28 @@ import VBrowseSuppliers from './pages/Vendors/VBrowseSuppliers'
 import VProfilePage from './pages/Vendors/VProfilePage'
 import VEditProfilePage from './pages/Vendors/VEditProfilePage'
 
+// --- RequireAuth: Protects routes ---
+function RequireAuth({ children, allowedRoles }) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!token || !user) {
+      navigate('/auth');
+    } else if (allowedRoles && !allowedRoles.includes(user.identity)) {
+      navigate('/auth');
+    }
+  }, [navigate, allowedRoles]);
+  return children;
+}
+
+// --- Logout utility ---
+export function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/auth';
+}
+
 const PublicLayout = () => (
   <div className="site-wrapper">
     <PublicNavbar />
@@ -64,157 +86,97 @@ const AppLayout = () => {
 }
 
 function App() {
-  const [users, setUsers] = useState(() => {
-    const savedUsers = localStorage.getItem('users');
-    return savedUsers ? JSON.parse(savedUsers) : [];
-  });
-  
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
-
-  const handleSignUp = (newUserData) => {
-    setUsers(currentUsers => [...currentUsers, newUserData]);
-  };
-
-  const handleLogin = (loginData) => {
-    const user = users.find(u => u.email === loginData.email && u.password === loginData.password);
-    if (user) {
-      if (user.role === 'vendor') {
-        navigate('/vendor/dashboard');
-      } else {
-        navigate('/supplier/dashboard');
-      }
-      return true;
-    }
-    return false;
-  };
-  
-  const initialVendorProfile = {
-    name: 'Gupta Chaat Corner',
-    tagline: 'The Best Chaat in Bhopal',
-    profilePicture: 'https://placehold.co/150x150/dbeafe/1e40af?text=GC',
-    coverPhoto: 'https://placehold.co/1200x300/e0eafc/1e40af?text=Delicious+Street+Food',
-    address: '123, Main Bazaar, Bhopal, Madhya Pradesh',
-    phone: '+91 91234 56789',
-    email: 'gupta.chaat@example.com',
-    memberSince: 'July 2024',
-    topItems: ['Dahi Puri', 'Pani Puri', 'Aloo Tikki Chaat'],
-  };
-
-  const [vendorProfile, setVendorProfile] = useState(() => {
-    const savedProfile = localStorage.getItem('vendorProfile');
-    // DEBUG: Log what is being loaded from localStorage
-    console.log('Loading profile from localStorage:', savedProfile);
-    return savedProfile ? JSON.parse(savedProfile) : initialVendorProfile;
-  });
-
-  useEffect(() => {
-    // DEBUG: Log what is being saved to localStorage
-    console.log('Saving profile to localStorage:', vendorProfile);
-    localStorage.setItem('vendorProfile', JSON.stringify(vendorProfile));
-  }, [vendorProfile]);
-
-  const handleUpdateVendorProfile = (newProfileData) => {
-    // DEBUG: Log the data received from the Edit Profile page
-    console.log('handleUpdateVendorProfile called with:', newProfileData);
-    setVendorProfile(prevProfile => ({ ...prevProfile, ...newProfileData }));
-  };
-
-  const [requests, setRequests] = useState([
-    { id: 'REQ-001', buyerName: 'Gupta Chaat Corner', buyerAddress: '123, Main Bazaar, Bhopal', item: 'Potatoes', quantity: '25 kg', deliveryDate: 'July 28, 2025', price: '₹625', status: 'Pending' },
-  ]);
-
-  const [orders, setOrders] = useState([
-    { id: 'ORD-104', productName: 'Cooking Oil', quantity: '75 Litres', status: 'Delivered', vendorName: "Rahul's Rolls", vendorAddress: '10, 10 Number Market, Bhopal', deliveryDate: 'July 22, 2025', transactionType: 'UPI' },
-  ]);
-  
-  const [sentRequests, setSentRequests] = useState([
-    { id: 'VREQ-001', supplierName: 'Rajesh Kumar Supplies', supplierAddress: '15, Sabzi Mandi, Bhopal', item: 'Potatoes', quantity: '25 kg', price: '₹625', status: 'Pending' },
-  ]);
-
-  const handleConfirmRequest = (requestToConfirm) => {
-    setRequests(currentRequests => currentRequests.filter(req => req.id !== requestToConfirm.id));
-    const newOrder = {
-      id: `ORD-${Date.now()}`,
-      productName: requestToConfirm.item,
-      quantity: requestToConfirm.quantity,
-      status: 'In Process',
-      vendorName: requestToConfirm.buyerName,
-      vendorAddress: requestToConfirm.buyerAddress,
-      deliveryDate: requestToConfirm.deliveryDate,
-      transactionType: 'Pending',
-    };
-    setOrders(currentOrders => [newOrder, ...currentOrders]);
-  };
-
-  const handleRejectRequest = (requestId) => {
-    setRequests(currentRequests => currentRequests.filter(req => req.id !== requestId));
-  };
-
-  const handleCancelSentRequest = (requestId) => {
-    setSentRequests(currentRequests => currentRequests.filter(req => req.id !== requestId));
-  };
-
-  const handleSendRequest = (requestDetails) => {
-    const newSentRequest = {
-      id: `VREQ-${Date.now()}`,
-      supplierName: requestDetails.supplierName,
-      supplierAddress: requestDetails.supplierAddress,
-      item: requestDetails.item,
-      quantity: requestDetails.quantity,
-      price: requestDetails.price,
-      status: 'Pending',
-    };
-    setSentRequests(current => [newSentRequest, ...current]);
-  };
-
-  const handleSendRefillRequest = (refillDetails) => {
-    const newSentRequest = {
-      id: `VREQ-${Date.now()}`,
-      ...refillDetails,
-      status: 'Pending',
-    };
-    setSentRequests(current => [newSentRequest, ...current]);
-  };
+  // --- Remove legacy login/signup logic ---
 
   return (
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
       </Route>
-      <Route path="/auth" element={<LoginPage onSignUp={handleSignUp} onLogin={handleLogin} />} />
+      <Route path="/auth" element={<LoginPage />} />
       <Route element={<AppLayout />}>
-        <Route path="/supplier/dashboard" element={<SDashboard />} />
-        <Route path="/supplier/stock" element={<Stockpage />} />
+        {/* Supplier protected routes */}
+        <Route path="/supplier/dashboard" element={
+          <RequireAuth allowedRoles={['supplier']}>
+            <SDashboard />
+          </RequireAuth>
+        } />
+        <Route path="/supplier/stock" element={
+          <RequireAuth allowedRoles={['supplier']}>
+            <Stockpage />
+          </RequireAuth>
+        } />
         <Route 
           path="/supplier/requests" 
-          element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />} 
+          element={
+            <RequireAuth allowedRoles={['supplier']}>
+              <RequestPage />
+            </RequireAuth>
+          } 
         />
         <Route 
           path="/supplier/order-history" 
-          element={<SupplierOrderH orders={orders} setOrders={setOrders} />} 
+          element={
+            <RequireAuth allowedRoles={['supplier']}>
+              <SupplierOrderH />
+            </RequireAuth>
+          } 
         />
-        <Route path="/supplier/profile" element={<ProfilePage />} />
-        <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+        <Route path="/supplier/profile" element={
+          <RequireAuth allowedRoles={['supplier']}>
+            <ProfilePage />
+          </RequireAuth>
+        } />
+        <Route path="/supplier/profile/edit" element={
+          <RequireAuth allowedRoles={['supplier']}>
+            <EditProfilePage />
+          </RequireAuth>
+        } />
 
-        <Route path="/vendor/dashboard" element={<VDashboard />} />
-        <Route path="/vendor/browse" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
-        <Route path="/vendor/stock" element={<VStockPage />} />
+        {/* Vendor protected routes */}
+        <Route path="/vendor/dashboard" element={
+          <RequireAuth allowedRoles={['vendor']}>
+            <VDashboard />
+          </RequireAuth>
+        } />
+        <Route path="/vendor/browse" element={
+          <RequireAuth allowedRoles={['vendor']}>
+            <VBrowseSuppliers />
+          </RequireAuth>
+        } />
+        <Route path="/vendor/stock" element={
+          <RequireAuth allowedRoles={['vendor']}>
+            <VStockPage />
+          </RequireAuth>
+        } />
         <Route 
           path="/vendor/requests" 
-          element={<VRefillPage sentRequests={sentRequests} onCancel={handleCancelSentRequest} onSendRequest={handleSendRefillRequest} />} 
+          element={
+            <RequireAuth allowedRoles={['vendor']}>
+              <VRefillPage />
+            </RequireAuth>
+          } 
         />
         <Route
           path="/vendor/order-history"
-          element={<VOrderHistoryPage />}
+          element={
+            <RequireAuth allowedRoles={['vendor']}>
+              <VOrderHistoryPage />
+            </RequireAuth>
+          }
         />
-        <Route path="/vendor/profile" element={<VProfilePage vendorData={vendorProfile} />} />
+        <Route path="/vendor/profile" element={
+          <RequireAuth allowedRoles={['vendor']}>
+            <VProfilePage />
+          </RequireAuth>
+        } />
         <Route 
           path="/vendor/profile/edit" 
-          element={<VEditProfilePage vendorData={vendorProfile} onSave={handleUpdateVendorProfile} />} 
+          element={
+            <RequireAuth allowedRoles={['vendor']}>
+              <VEditProfilePage />
+            </RequireAuth>
+          } 
         />
       </Route>
     </Routes>

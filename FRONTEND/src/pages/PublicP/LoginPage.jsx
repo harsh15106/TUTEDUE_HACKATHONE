@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './LoginPage.css';
 
-const LoginPage = ({ onSignUp, onLogin }) => {
+const API_URL = 'http://localhost:3001/api/v1';
+
+const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState('vendor');
   const [showPassword, setShowPassword] = useState(false);
-  
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
   const [stallName, setStallName] = useState('');
   const [cuisineType, setCuisineType] = useState('');
-  
   const [businessName, setBusinessName] = useState('');
   const [specialties, setSpecialties] = useState('');
-
   const [captcha, setCaptcha] = useState('');
   const [captchaInput, setCaptchaInput] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const generateCaptcha = () => {
     const randomString = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -31,7 +31,8 @@ const LoginPage = ({ onSignUp, onLogin }) => {
     generateCaptcha();
   }, [isLogin]);
 
-  const handleSignUp = (e) => {
+  // --- SIGN UP ---
+  const handleSignUp = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
@@ -46,32 +47,51 @@ const LoginPage = ({ onSignUp, onLogin }) => {
       generateCaptcha();
       return;
     }
-    
-    const userData = { fullName, email, password, role };
-    if (role === 'vendor') {
-      userData.stallName = stallName;
-      userData.cuisineType = cuisineType;
-    } else {
-      userData.businessName = businessName;
-      userData.specialties = specialties;
+    try {
+      const payload = {
+        username: fullName,
+        email,
+        pass: password,
+        address: "N/A", // You can add an address field if you want
+        identity: role,
+        phone: "0000000000" // You can add a phone field if you want
+      };
+      const res = await axios.post(`${API_URL}/auth/register`, payload);
+      alert('Sign up successful! Please log in.');
+      setIsLogin(true);
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed.");
     }
-
-    onSignUp(userData);
-    setError('');
-    alert('Sign up successful! Please log in.');
-    setIsLogin(true);
   };
-  
-  const handleLogin = (e) => {
+
+  // --- LOGIN ---
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (captcha.toLowerCase() !== captchaInput.toLowerCase()) {
       setError("Captcha is incorrect.");
       generateCaptcha();
       return;
     }
-    const success = onLogin({ email, password });
-    if (!success) {
-      setError("Invalid email or password.");
+    try {
+      const res = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        pass: password
+      });
+      // Save token and user info
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      setError('');
+      // Redirect based on role
+      if (res.data.user.identity === 'vendor') {
+        navigate('/vendor/dashboard');
+      } else if (res.data.user.identity === 'supplier') {
+        navigate('/supplier/dashboard');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed.");
       generateCaptcha();
     }
   };

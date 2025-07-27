@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './VOrderHistoryPage.css';
 
+const API_URL = 'http://localhost:3001/api/v1';
+
 const VOrderDetailsModal = ({ show, onClose, order, onPaymentMethodChange }) => {
-  if (!show) {
+  if (!show || !order) {
     return null;
   }
 
@@ -41,15 +44,31 @@ const VOrderDetailsModal = ({ show, onClose, order, onPaymentMethodChange }) => 
 };
 
 const VOrderHistoryPage = () => {
-  const initialOrders = [
-    { id: 'VORD-01', productName: 'Potatoes', quantity: '25 kg', status: 'Delivered', supplierName: 'Rajesh Kumar Supplies', supplierAddress: '15, Sabzi Mandi, Bhopal', supplierMobile: '+91 98765 43210', deliveryDate: 'July 26, 2025', paymentMethod: 'UPI' },
-    { id: 'VORD-02', productName: 'Onions', quantity: '50 kg', status: 'Out for Delivery', supplierName: 'Fresh Veggies Co.', supplierAddress: '72, Wholesale Market, Indore', supplierMobile: '+91 98765 11223', deliveryDate: 'July 27, 2025', paymentMethod: 'Cash' },
-    { id: 'VORD-03', productName: 'Tomatoes', quantity: '20 kg', status: 'In Process', supplierName: 'Daily Greens', supplierAddress: '11, Farmgate, Ujjain', supplierMobile: '+91 98765 44556', deliveryDate: 'July 28, 2025', paymentMethod: 'Bank Transfer' },
-  ];
-
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(`${API_URL}/requests/all`);
+        const allOrders = response.data.data || [];
+        // Only show orders that are not pending
+        const filteredOrders = allOrders.filter(order => order.status && order.status !== 'Pending' && order.status !== 'PENDING');
+        setOrders(filteredOrders);
+      } catch (err) {
+        setError('Failed to fetch order history.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
 
   const handleRowClick = (order) => {
     setSelectedOrder(order);
@@ -86,28 +105,36 @@ const VOrderHistoryPage = () => {
           <p>Review your past and current order details.</p>
         </header>
         <main className="order-table-container">
-          <table className="order-table">
-            <thead>
-              <tr>
-                <th>S.No.</th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => (
-                <tr key={order.id} onClick={() => handleRowClick(order)}>
-                  <td data-label="S.No.">{index + 1}</td>
-                  <td data-label="Product">{order.productName}</td>
-                  <td data-label="Quantity">{order.quantity}</td>
-                  <td data-label="Status">
-                    <span className={`status-badge status-${order.status.replace(/\s+/g, '-').toLowerCase()}`}>{order.status}</span>
-                  </td>
+          {isLoading ? (
+            <p>Loading order history...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : orders.length === 0 ? (
+            <p className="no-orders-message">No accepted or completed orders yet.</p>
+          ) : (
+            <table className="order-table">
+              <thead>
+                <tr>
+                  <th>S.No.</th>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {orders.map((order, index) => (
+                  <tr key={order._id || order.id} onClick={() => handleRowClick(order)}>
+                    <td data-label="S.No.">{index + 1}</td>
+                    <td data-label="Product">{order.product || order.productName}</td>
+                    <td data-label="Quantity">{order.quantity}</td>
+                    <td data-label="Status">
+                      <span className={`status-badge status-${(order.status || '').replace(/\s+/g, '-').toLowerCase()}`}>{order.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </main>
       </div>
     </>

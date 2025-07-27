@@ -136,9 +136,10 @@ const VRefillPage = () => {
     setError(null);
     try {
       const response = await refillApiService.fetchSentRequests();
-      // Show all requests, not just pending
+      // Only show pending requests
       const allRequests = response.data.data || [];
-      setSentRequests(allRequests);
+      const pendingRequests = allRequests.filter(req => req.status === 'Pending' || req.status === 'PENDING');
+      setSentRequests(pendingRequests);
     } catch (err) {
       let errorMessage = 'An unexpected error occurred while fetching requests.';
       if (err.response) {
