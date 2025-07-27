@@ -1,0 +1,20 @@
+.mapview-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #ffffffdd;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+.mapview-container h2 {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.mapview-container p {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 2rem;
+}

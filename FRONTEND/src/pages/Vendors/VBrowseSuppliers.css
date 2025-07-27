@@ -1,0 +1,174 @@
+.browse-suppliers-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.browse-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.browse-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+}
+
+.browse-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-bar-container {
+  margin-top: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+}
+
+.category-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.category-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-secondary);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-button:hover {
+  background-color: #f0fdf4;
+  border-color: #a7f3d0;
+}
+
+.category-button.active {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.suppliers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.supplier-card {
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.supplier-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-main-info h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-main-info .supplier-address {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.supplier-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.tag.trusted-retailer { background-color: #dbeafe; color: #1e40af; }
+.tag.bulk-discount { background-color: #fef3c7; color: #92400e; }
+
+.supplier-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.supplier-details-grid div {
+  text-align: center;
+}
+
+.supplier-details-grid span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: block;
+}
+
+.supplier-details-grid strong {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.payment-modes {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 1rem 0;
+}
+
+.btn-buy {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #22c55e;
+  color: white;
+  margin-top: auto;
+}
+
+.btn-buy:hover {
+  background-color: #16a34a;
+}

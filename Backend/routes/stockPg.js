@@ -2,21 +2,21 @@ const router = require("express").Router();
 const Stock = require("../database/stock");
 
 router.post('/stock/stock', async (req, res) => {
-    try {        // Basic validation
+    try {
+        const { product, quantity, price } = req.body;
+
+        // Basic validation
         if (!product || quantity === undefined || price === undefined) {
             return res.status(400).json({ message: 'Missing required fields: product, quantity, and price are required.' });
-
-        const { product, quantity, price,  } = req.body; // Added unit here for completeness
-        console.log('POST /api/stock - Adding new item:', req.body);
-
         }
+
+        console.log('POST /api/stock - Adding new item:', req.body);
 
         // Create a new stock document
         const newItem = new Stock({
             product,
             quantity,
-            price,
-             // Your schema can be updated to include this field
+            price
         });
 
         // Save the new item to the database
@@ -29,7 +29,7 @@ router.post('/stock/stock', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Server error while adding item.", error: error.message });
     }
-})
+});
 router.delete('/stock/delete/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
@@ -49,7 +49,7 @@ router.delete('/stock/delete/:id', async (req, res) => {
 router.put('/stock/update/:id', async (req, res) => {
     try {
         const itemId = req.params.id;
-        console.log(`PUT /api/stock/${itemId} - Updating item with:, req.body`);
+        console.log(`PUT /api/stock/${itemId} - Updating item with:`, req.body);
 
         const updatedItem = await Stock.findByIdAndUpdate(
             itemId,

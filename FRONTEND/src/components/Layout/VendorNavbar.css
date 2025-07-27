@@ -14,12 +14,6 @@ nav {
   z-index: 100;
 }
 
-.nav-left-section {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
 .Apna {
   font-size: 1.5rem;
   font-weight: 700;
@@ -87,6 +81,7 @@ nav {
   background-color: var(--background-color);
 }
 
+
 .desktop-nav {
   display: flex;
   gap: 2.5rem;
@@ -115,7 +110,6 @@ nav {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-primary);
 }
 
 .mobile-nav-overlay {
@@ -123,14 +117,6 @@ nav {
 }
 
 @media (max-width: 768px) {
-  nav {
-    padding: 0 1rem;
-  }
-
-  .nav-left-section {
-    gap: 1rem;
-  }
-
   .desktop-nav {
     display: none;
   }
