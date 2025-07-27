@@ -7,7 +7,7 @@ import ChatModal from '/src/components/chat/ChatModal';
 //  API Service Layer
 // ====================================================================
 // CORRECTED: Port changed to 5001 as per your comment
-const API_URL = 'http://localhost:5001/api/v1'; 
+const API_URL = 'http://localhost:3001/api/v1'; 
 
 const apiService = {
   fetchOrders: () => {

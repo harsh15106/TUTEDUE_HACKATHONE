@@ -1,72 +1,61 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './VRefillPage.css';
 
 // ====================================================================
 //  API Service Layer for VRefillPage
-//  This defines the functions that interact with your backend API.
 // ====================================================================
-const API_URL = 'http://localhost:3001/api/v1'; // Ensure this matches your backend's URL
+const API_URL = 'http://localhost:3001/api/v1'; 
 
 const refillApiService = {
-  // This function now calls the '/requests/all' endpoint you have.
+  // Fetches all requests made by the user. We will filter by status on the frontend.
   fetchSentRequests: () => {
     return axios.get(`${API_URL}/requests/all`);
   },
-  // This function will be used for the "Cancel Request" button.
-  // NOTE: Your backend needs a DELETE route like this: router.delete('/requests/:id', ...)
   cancelRequest: (requestId) => {
     return axios.delete(`${API_URL}/requests/${requestId}`);
+  },
+  createRequest: (newRequestData) => {
+    return axios.post(`${API_URL}/requests`, newRequestData);
   }
 };
 
 
 // ====================================================================
 //  Refill Card Component
-//  This component is updated to correctly display data from your backend schema.
 // ====================================================================
 const RefillCard = ({ request, onCancel }) => {
-  // Destructure properties directly from the backend's request object
+  // Destructure properties, including the actual 'status'
   const {
     _id,
-    name,       // Maps to 'Rajesh Kumar Supplies' in your image
-    product,    // Maps to 'Potatoes'
+    name,
+    product,
     quantity,
     price,
-    location,   // Maps to '15, Sabzi Mandi, Bhopal'
+    location,
+    status // Use the status from the request data
   } = request;
-  const status = 'PENDING'; // Status is now hardcoded to PENDING
 
   // Dynamically set the class for the status pill's color
   const statusClass = `status-pill-${status.toLowerCase().replace(' ', '-')}`;
 
   return (
-    // The main card's class is also set by the status
     <div className={`refill-card status-${status.toLowerCase().replace(' ', '-')}`}>
       <div className="card-header">
         <h3>{name}</h3>
+        {/* Display the actual status */}
         <span className={`status-pill ${statusClass}`}>{status}</span>
       </div>
       <p className="supplier-address">{location}</p>
       
       <div className="refill-details">
-        <div className="detail-item">
-          <span>Item</span>
-          <strong>{product}</strong>
-        </div>
-        <div className="detail-item">
-          <span>Quantity</span>
-          <strong>{quantity} kg</strong>
-        </div>
-        <div className="detail-item">
-          <span>Price</span>
-          <strong>₹{price}</strong>
-        </div>
+        <div className="detail-item"><span>Item</span><strong>{product}</strong></div>
+        <div className="detail-item"><span>Quantity</span><strong>{quantity} kg</strong></div>
+        <div className="detail-item"><span>Price</span><strong>₹{price}</strong></div>
       </div>
 
-      {/* Only show the "Cancel Request" button if the status is 'PENDING' */}
-      {status === 'PENDING' && (
+      {/* Only show the "Cancel Request" button if the status is 'Pending' */}
+      {status === 'Pending' && (
         <div className="card-actions">
           <button className="btn-cancel-request" onClick={() => onCancel(_id)}>
             Cancel Request
@@ -77,85 +66,6 @@ const RefillCard = ({ request, onCancel }) => {
   );
 };
 
-
-// ====================================================================
-//  Main VRefillPage Component (Now fetches its own data)
-// ====================================================================
-const VRefillPage = () => {
-  const [sentRequests, setSentRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // This function fetches data from the backend.
-  const loadSentRequests = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await refillApiService.fetchSentRequests();
-      // The backend sends an object with a 'data' property which is the array of requests
-      setSentRequests(response.data.data || []);
-    } catch (err) {
-      setError('Failed to fetch your sent requests. Please ensure the backend is running and the API route is correct.');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // useEffect hook to call loadSentRequests when the component first loads.
-  useEffect(() => {
-    loadSentRequests();
-  }, [loadSentRequests]);
-
-  // This function handles the "Cancel Request" button click.
-  const handleCancelRequest = async (requestId) => {
-    if (window.confirm('Are you sure you want to cancel this request?')) {
-      try {
-        await refillApiService.cancelRequest(requestId);
-        // This removes the canceled request from the list in the UI instantly.
-        setSentRequests(currentRequests =>
-          currentRequests.filter(req => req._id !== requestId)
-        );
-      } catch (err) {
-        alert('Failed to cancel the request. Your backend might be missing the DELETE /api/v1/requests/:id route.');
-        console.error(err);
-      }
-    }
-  };
-
-  // This function decides what to show on the screen: loading message, error, or the request cards.
-  const renderContent = () => {
-    if (isLoading) {
-      return <p>Loading your requests...</p>;
-    }
-    if (error) {
-      return <p className="error-message">{error}</p>;
-    }
-    if (sentRequests.length === 0) {
-      return <p className="no-requests-message">You have not sent any refill requests.</p>;
-    }
-    return sentRequests.map((req) => (
-      <RefillCard
-        key={req._id}
-        request={req}
-        onCancel={handleCancelRequest}
-      />
-    ));
-  };
-
-  return (
-    <div className="refill-page-container">
-      <header className="refill-page-header">
-        <h1>Your Refill Requests</h1>
-        <p>Track the status of all your requests sent to suppliers.</p>
-      </header>
-      <main className="refills-grid">
-        {renderContent()}
-      </main>
-=======
-import React, { useState } from 'react';
-import './VRefillPage.css';
-
 const SendRequestModal = ({ show, onClose, onSend }) => {
   if (!show) return null;
 
@@ -163,9 +73,9 @@ const SendRequestModal = ({ show, onClose, onSend }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const newRequest = {
-      supplierName: formData.get('supplierName'),
-      supplierAddress: formData.get('supplierAddress'),
-      item: formData.get('item'),
+      name: formData.get('supplierName'),
+      location: formData.get('supplierAddress'),
+      product: formData.get('item'),
       quantity: formData.get('quantity'),
       price: formData.get('price'),
     };
@@ -204,26 +114,104 @@ const SendRequestModal = ({ show, onClose, onSend }) => {
           </div>
         </form>
       </div>
->>>>>>> 2a7dfa26256e8283513c3a6cfe3b4dc78f74faf2
     </div>
   );
 };
 
-const VRefillPage = ({ sentRequests = [], onCancel, onSendRequest }) => {
+
+
+// ====================================================================
+//  Main VRefillPage Component (Corrected)
+// ====================================================================
+const VRefillPage = () => {
+   
+  const [sentRequests, setSentRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
-  const handleSend = (newRequest) => {
-    onSendRequest(newRequest);
-    setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, 3000);
+  const loadSentRequests = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await refillApiService.fetchSentRequests();
+      // Show all requests, not just pending
+      const allRequests = response.data.data || [];
+      setSentRequests(allRequests);
+    } catch (err) {
+      let errorMessage = 'An unexpected error occurred while fetching requests.';
+      if (err.response) {
+        errorMessage = `Error ${err.response.status}: Could not fetch data from the server. Please check the API endpoint.`;
+      } else if (err.request) {
+        errorMessage = 'Network Error: Could not connect to the backend server. Please ensure it is running.';
+      } else {
+        errorMessage = `An error occurred: ${err.message}`;
+      }
+      setError(errorMessage);
+      console.error('API Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSentRequests();
+  }, [loadSentRequests]);
+
+  const handleSendRequest = async (newRequest) => {
+    try {
+      await refillApiService.createRequest(newRequest);
+      setIsModalOpen(false);
+      loadSentRequests();
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 3000);
+    } catch (err) {
+      setError('Failed to send request. Please try again.');
+      console.error(err);
+    }
+  };
+
+  const handleCancelRequest = async (requestId) => {
+    if (window.confirm('Are you sure you want to cancel this request?')) {
+      try {
+        await refillApiService.cancelRequest(requestId);
+        setSentRequests(currentRequests =>
+          currentRequests.filter(req => req._id !== requestId)
+        );
+      } catch (err) {
+        setError('Failed to cancel the request. Please try again.');
+        console.error('Cancel Request Error:', err);
+      }
+    }
+  };
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <p>Loading your requests...</p>;
+    }
+    if (error) {
+      return <p className="error-message">{error}</p>;
+    }
+    if (sentRequests.length === 0) {
+      return <p className="no-requests-message">You have no refill requests yet. Click the button above to add one!</p>;
+    }
+    return sentRequests.map((req) => (
+      <RefillCard
+        key={req._id}
+        request={req}
+        onCancel={handleCancelRequest}
+      />
+    ));
   };
 
   return (
     <>
-      <SendRequestModal show={isModalOpen} onClose={() => setIsModalOpen(false)} onSend={handleSend} />
+      <SendRequestModal
+        show={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSend={handleSendRequest}
+      />
       {showNotification && <div className="notification">Request Sent Successfully!</div>}
       <div className="refill-page-container">
         <header className="refill-page-header">
@@ -231,42 +219,12 @@ const VRefillPage = ({ sentRequests = [], onCancel, onSendRequest }) => {
             <h1>Your Refill Requests</h1>
             <p>Track the status of all your requests sent to suppliers.</p>
           </div>
-          <button className="btn-send-request" onClick={() => setIsModalOpen(true)}>+ Send New Request</button>
+          <button className="btn-send-request" onClick={() => setIsModalOpen(true)}>
+            + Send New Request
+          </button>
         </header>
-        
         <main className="refills-grid">
-          {sentRequests.map((req) => (
-            <div key={req.id} className={`refill-card status-${req.status.toLowerCase()}`}>
-              <div className="card-header">
-                <h3>{req.supplierName}</h3>
-                <span className={`status-pill status-pill-${req.status.toLowerCase()}`}>{req.status}</span>
-              </div>
-              <p className="supplier-address">{req.supplierAddress}</p>
-              
-              <div className="refill-details">
-                <div className="detail-item">
-                  <span>Item</span>
-                  <strong>{req.item}</strong>
-                </div>
-                <div className="detail-item">
-                  <span>Quantity</span>
-                  <strong>{req.quantity}</strong>
-                </div>
-                <div className="detail-item">
-                  <span>Price</span>
-                  <strong>{req.price}</strong>
-                </div>
-              </div>
-
-              {req.status === 'Pending' && (
-                <div className="card-actions">
-                  <button className="btn-cancel-request" onClick={() => onCancel(req.id)}>
-                    Cancel Request
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+          {renderContent()}
         </main>
       </div>
     </>
