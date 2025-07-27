@@ -25,7 +25,7 @@ const VendorNavbar = () => {
   return (
     <div>
       <nav>
-        <Link to="/vendor/dashboard" className='Apna'>ApnaMandi</Link>
+        <Link to="/vendor/dashboard" className='Apna'>ApniMandi</Link>
         <button className="hamburger-menu" onClick={toggleMobileMenu}><img src="/src/assets/hamburger.svg" alt="" />
         </button>
         <ul className="desktop-nav">

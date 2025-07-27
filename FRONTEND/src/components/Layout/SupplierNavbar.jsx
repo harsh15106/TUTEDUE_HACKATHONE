@@ -23,7 +23,7 @@ const SupplierNavbar = () => {
     return (
         <nav>
             <div className="nav-left-section">
-                <Link to="/supplier/dashboard" className='Apna'>ApnaMandi</Link>
+                <Link to="/supplier/dashboard" className='Apna'>ApniMandi</Link>
             </div>
 
             <button className="hamburger-menu" onClick={toggleMobileMenu}>

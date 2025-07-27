@@ -4,8 +4,10 @@ import { LanguageProvider } from './context/LanguageContext';
 
 import SupplierNavbar from './components/Layout/SupplierNavbar'
 import VendorNavbar from './components/Layout/VendorNavbar'
+import PublicNavbar from './components/Layout/PublicNavbar'
 
 import LandingPage from './pages/PublicP/LandingPage'
+import LoginPage from './pages/PublicP/LoginPage'
 import SDashboard from './pages/Supplier/SDashboard'
 import Stockpage from './pages/Supplier/Stockpage'
 import RequestPage from './pages/Supplier/RequestPage'
@@ -19,6 +21,13 @@ import VOrderHistoryPage from './pages/Vendors/VOrderHistoryPage'
 import VBrowseSuppliers from './pages/Vendors/VBrowseSuppliers'
 import VProfilePage from './pages/Vendors/VProfilePage'
 import VEditProfilePage from './pages/Vendors/VEditProfilePage'
+
+const PublicLayout = () => (
+  <>
+    <PublicNavbar />
+    <Outlet />
+  </>
+);
 
 const AppLayout = () => {
   const location = useLocation()
@@ -154,21 +163,17 @@ const initialVendorProfile = {
     <LanguageProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<LandingPage />} />
+        </Route>
+        <Route path="/auth" element={<LoginPage />} />
 
         <Route element={<AppLayout />}>
           <Route path="/supplier/dashboard" element={<SDashboard />} />
           <Route path="/supplier/stock" element={<Stockpage />} />
           <Route
             path="/supplier/requests"
-            element={
-              <RequestPage
-                requests={requests}
-                onConfirm={handleConfirmRequest}
-                onReject={handleRejectRequest}
-              />
-            }
-          />
+            element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest}/>}/>
           <Route
             path="/supplier/order-history"
             element={<SupplierOrderH orders={orders} setOrders={setOrders} />}
@@ -179,14 +184,8 @@ const initialVendorProfile = {
           <Route path="/vendor/dashboard" element={<VDashboard />} />
           <Route path="/vendor/order" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
           <Route
-            path="/vendor/requests"
-            element={
-              <VRefillPage
-                sentRequests={sentRequests}
-                onCancel={handleCancelSentRequest}
-              />
-            }
-          />
+            path="/vendor/requests" element={<VRefillPage sentRequests={sentRequests} onCancel={handleCancelSentRequest}/>}/>
+
           <Route
             path="/vendor/order-history"
             element={<VOrderHistoryPage />}
