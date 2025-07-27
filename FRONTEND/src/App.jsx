@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import {BrowserRouter,Routes,Route,Navigate,Outlet,useLocation,} from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, } from 'react-router-dom'
 import { LanguageProvider } from './context/LanguageContext';
 
 import SupplierNavbar from './components/Layout/SupplierNavbar'
 import VendorNavbar from './components/Layout/VendorNavbar'
 import PublicNavbar from './components/Layout/PublicNavbar'
+import Footer from './components/Layout/Footer';
 
 import LandingPage from './pages/PublicP/LandingPage'
 import LoginPage from './pages/PublicP/LoginPage'
@@ -24,8 +25,13 @@ import VEditProfilePage from './pages/Vendors/VEditProfilePage'
 
 const PublicLayout = () => (
   <>
-    <PublicNavbar />
-    <Outlet />
+    <div className="site-wrapper">
+      <PublicNavbar />
+      <main className="site-content">
+        <Outlet />
+      </main>
+      <Footer type="public" />
+    </div>
   </>
 );
 
@@ -34,17 +40,26 @@ const AppLayout = () => {
   const isVendorRoute = location.pathname.startsWith('/vendor')
   const isSupplierRoute = location.pathname.startsWith('/supplier')
 
+  let footerType = 'public';
+  if (isVendorRoute) footerType = 'vendor';
+  if (isSupplierRoute) footerType = 'supplier';
+
   return (
     <>
-      {isVendorRoute && <VendorNavbar />}
-      {isSupplierRoute && <SupplierNavbar />}
-      <Outlet />
+      <div className="site-wrapper">
+        {isVendorRoute && <VendorNavbar />}
+        {isSupplierRoute && <SupplierNavbar />}
+        <div className="site-content">
+          <Outlet />
+        </div>
+        <Footer type={footerType} />
+      </div>
     </>
   )
 }
 
 function App() {
-const initialVendorProfile = {
+  const initialVendorProfile = {
     name: 'Gupta Chaat Corner',
     tagline: 'The Best Chaat in Bhopal',
     profilePicture: 'https://placehold.co/150x150/dbeafe/1e40af?text=GC',
@@ -158,46 +173,54 @@ const initialVendorProfile = {
     };
     setSentRequests(current => [newSentRequest, ...current]);
   };
+  const handleSendRefillRequest = (refillDetails) => {
+    const newSentRequest = {
+      id: `VREQ-${Date.now()}`,
+      ...refillDetails,
+      status: 'Pending',
+    };
+    setSentRequests(current => [newSentRequest, ...current]);
+  };
 
   return (
     <LanguageProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<LandingPage />} />
-        </Route>
-        <Route path="/auth" element={<LoginPage />} />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<LandingPage />} />
+          </Route>
+          <Route path="/auth" element={<LoginPage />} />
 
-        <Route element={<AppLayout />}>
-          <Route path="/supplier/dashboard" element={<SDashboard />} />
-          <Route path="/supplier/stock" element={<Stockpage />} />
-          <Route
-            path="/supplier/requests"
-            element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest}/>}/>
-          <Route
-            path="/supplier/order-history"
-            element={<SupplierOrderH orders={orders} setOrders={setOrders} />}
-          />
-          <Route path="/supplier/profile" element={<ProfilePage />} />
-          <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
+          <Route element={<AppLayout />}>
+            <Route path="/supplier/dashboard" element={<SDashboard />} />
+            <Route path="/supplier/stock" element={<Stockpage />} />
+            <Route
+              path="/supplier/requests"
+              element={<RequestPage requests={requests} onConfirm={handleConfirmRequest} onReject={handleRejectRequest} />} />
+            <Route
+              path="/supplier/order-history"
+              element={<SupplierOrderH orders={orders} setOrders={setOrders} />}
+            />
+            <Route path="/supplier/profile" element={<ProfilePage />} />
+            <Route path="/supplier/profile/edit" element={<EditProfilePage />} />
 
-          <Route path="/vendor/dashboard" element={<VDashboard />} />
-          <Route path="/vendor/order" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
-          <Route
-            path="/vendor/requests" element={<VRefillPage sentRequests={sentRequests} onCancel={handleCancelSentRequest}/>}/>
+            <Route path="/vendor/dashboard" element={<VDashboard />} />
+            <Route path="/vendor/order" element={<VBrowseSuppliers onSendRequest={handleSendRequest} />} />
+            <Route
+              path="/vendor/requests" element={<VRefillPage sentRequests={sentRequests} onCancel={handleCancelSentRequest} onSendRequest={handleSendRefillRequest} />} />
 
-          <Route
-            path="/vendor/order-history"
-            element={<VOrderHistoryPage />}
-          />
-          <Route path="/vendor/profile" element={<VProfilePage vendorData={vendorProfile} />} />
-          <Route 
-            path="/vendor/profile/edit" 
-            element={<VEditProfilePage vendorData={vendorProfile} onSave={handleUpdateVendorProfile} />} 
-          />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            <Route
+              path="/vendor/order-history"
+              element={<VOrderHistoryPage />}
+            />
+            <Route path="/vendor/profile" element={<VProfilePage vendorData={vendorProfile} />} />
+            <Route
+              path="/vendor/profile/edit"
+              element={<VEditProfilePage vendorData={vendorProfile} onSave={handleUpdateVendorProfile} />}
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </LanguageProvider>
   )
 }
