@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
 
@@ -30,6 +30,69 @@ const FaqItem = ({ question, answer }) => {
   );
 };
 
+const ScrambleAnimation = ({ text, highlightText }) => {
+  const [displayText, setDisplayText] = useState('');
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%&';
+
+  useEffect(() => {
+    let intervalId;
+    let isMounted = true;
+
+    const animate = () => {
+      let iteration = 0;
+      clearInterval(intervalId);
+
+      intervalId = setInterval(() => {
+        if (!isMounted) return clearInterval(intervalId);
+
+        const scrambled = text
+          .split('')
+          .map((letter, index) => {
+            if (index < iteration) {
+              return text[index];
+            }
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('');
+        setDisplayText(scrambled);
+
+        if (iteration >= text.length) {
+          clearInterval(intervalId);
+          setTimeout(() => {
+            if (!isMounted) return;
+            setDisplayText('');
+            setTimeout(() => {
+              if (isMounted) animate();
+            }, 500);
+          }, 2000);
+        }
+        iteration += 1 / 2;
+      }, 50);
+    };
+
+    animate();
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, [text]);
+
+  const highlightIndex = text.indexOf(highlightText);
+  const startText = displayText.substring(0, highlightIndex);
+  const highlighted = displayText.substring(highlightIndex, highlightIndex + highlightText.length);
+  const endText = displayText.substring(highlightIndex + highlightText.length);
+
+  return (
+    <h1 className="landing-title">
+      {startText}
+      <span className="highlight">{highlighted}</span>
+      {endText}
+    </h1>
+  );
+};
+
+
 const LandingPage = () => {
   const features = [
     { icon: '✅', title: 'Verified Suppliers', description: 'Connect with trusted, high-quality suppliers vetted by our team.' },
@@ -55,11 +118,14 @@ const LandingPage = () => {
     <div className="landing-page">
       <section id="home" className="hero-section">
         <div className="landing-content">
-          <h1 className="landing-title">Welcome to ApnaMandi</h1>
+          <ScrambleAnimation text="Welcome to ApnaMandi" highlightText="ApnaMandi" />
           <p className="landing-subtitle">
             Connecting street food vendors with quality suppliers.
           </p>
-          <Link to="/auth" className="btn-get-started">Get Started</Link>
+          <Link to="/auth" className="btn-get-started">
+          Get Started
+          <span className="material-symbols-outlined arrow">arrow_forward</span>
+          </Link>
         </div>
       </section>
 
@@ -76,9 +142,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="reviews-section">
+      <section id="reviews" className="reviews-section">
         <div className="review-column">
-          <h2 className="section-title">What Suppliers Are Saying</h2>
+          <h2 className="section-title">What Vendors Are Saying</h2>
           {supplierReviews.map(review => (
             <div key={review.id} className="review-card">
               <p className="review-comment">"{review.comment}"</p>
@@ -90,7 +156,7 @@ const LandingPage = () => {
           ))}
         </div>
         <div className="review-column">
-          <h2 className="section-title">What Vendors Are Saying</h2>
+          <h2 className="section-title">What Suppliers Are Saying</h2>
           {vendorReviews.map(review => (
             <div key={review.id} className="review-card">
               <p className="review-comment">"{review.comment}"</p>
