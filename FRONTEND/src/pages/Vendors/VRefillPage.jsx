@@ -89,13 +89,9 @@ const SendRequestModal = ({ show, onClose, onSend }) => {
         <form onSubmit={handleSubmit}>
           <h2>Send a New Refill Request</h2>
           <div className="form-group">
-            <label htmlFor="supplierName">Supplier Name</label>
+            <label htmlFor="supplierName">Your Name</label>
             <input type="text" id="supplierName" name="supplierName" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="supplierAddress">Supplier Address</label>
-            <input type="text" id="supplierAddress" name="supplierAddress" required />
-          </div>
+          </div> 
           <div className="form-group">
             <label htmlFor="item">Item</label>
             <input type="text" id="item" name="item" required />

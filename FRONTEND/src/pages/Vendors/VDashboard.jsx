@@ -46,7 +46,7 @@ const VDashboard = () => {
     <div className="dashboard-layout">
       <div className="greeting-section vendor-greeting">
         <header className="dashboard-header">
-          <h1>Hello Gupta Ji, Welcome!</h1>
+          <h1>Hello Vendor , Welcome!</h1>
           <p>Find the best suppliers for your needs and manage your inventory with ease.</p>
         </header>
       </div>
