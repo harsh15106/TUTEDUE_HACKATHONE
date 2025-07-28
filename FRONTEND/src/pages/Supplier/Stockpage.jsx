@@ -92,7 +92,7 @@ const Stockpage = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get('http://localhost:3001/api/v1/stock/all');
+      const res = await axios.get('https://tutedue-hackathone-backend.onrender.com');
       setStockItems(res.data.data || []);
     } catch (err) {
       console.error('Error fetching stock items:', err);

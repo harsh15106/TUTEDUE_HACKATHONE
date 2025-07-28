@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginPage.css';
 
-const API_URL = 'http://localhost:3001/api/v1';
+const API_URL = 'https://tutedue-hackathone-backend.onrender.com';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);

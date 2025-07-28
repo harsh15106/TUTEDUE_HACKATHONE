@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './VOrderHistoryPage.css';
 
-const API_URL = 'http://localhost:3001/api/v1';
+const API_URL = 'https://tutedue-hackathone-backend.onrender.com';
 
 const VOrderDetailsModal = ({ show, onClose, order, onPaymentMethodChange }) => {
   if (!show || !order) {

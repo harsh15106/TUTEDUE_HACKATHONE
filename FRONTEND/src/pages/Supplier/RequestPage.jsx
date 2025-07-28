@@ -6,7 +6,7 @@ import './RequestPage.css';
 //  API Service Layer
 //  In a larger app, this would be in its own file (e.g., src/services/api.js)
 // ====================================================================
-const API_URL = 'http://localhost:3001/api/v1'; // Port updated as per your instruction.
+const API_URL = 'https://tutedue-hackathone-backend.onrender.com'; // Port updated as per your instruction.
 
 const apiService = {
   fetchPendingRequests: () => {

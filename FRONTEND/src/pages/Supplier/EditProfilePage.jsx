@@ -6,7 +6,7 @@ import './EditProfilePage.css';
 // ====================================================================
 //  API Service
 // ====================================================================
-const API_URL = 'http://localhost:3001/api/v1';
+const API_URL = 'https://tutedue-hackathone-backend.onrender.com';
 
 const profileApiService = {
   // Fetches the current user's profile data

@@ -16,7 +16,7 @@ const ProfilePage = () => {
       return;
     }
     try {
-      const res = await fetch('http://localhost:3001/api/v1/profile/me', {
+      const res = await fetch('https://tutedue-hackathone-backend.onrender.com', {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Cache-Control': 'no-cache' // Ask browser not to cache the result
